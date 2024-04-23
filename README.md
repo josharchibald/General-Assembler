@@ -1,2 +1,3 @@
 # General-Assembler
-A general assembler for any processor with fixed-length instructions.
+An assembler for any processor with fixed-length instructions.
+See System_Specification for more details.
