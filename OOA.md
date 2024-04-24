@@ -32,8 +32,8 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >>
 >>* `file_name` - The name of the file as a string.
 >>
->>* `next_line` - The next line that the file has as a string. 
->>                End of file `EOF` constant returned if there is 
+>>* `next_line` - The next line that the file has as a string.
+>>                End of file `EOF` constant returned if there is
 >>                no next line.
 >>
 >>#### Modifiers
