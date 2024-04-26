@@ -18,8 +18,8 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >* `origin_file_name` - Name of the file the line of assembly originally
 >                       belonged to as a `string`.
 >* `line_num` - The line number of the assembly line in its file as an `int`.
->* `text` - The assembly line as a text as a `string`.
->* `label` - The label in the assembly line as a`string`.
+>* `text` - The assembly line as a `string`.
+>* `label` - The label in the assembly line as a `string`.
 >* `op_name` - The operation name in the assembly line as a `string`.
 >* `operand` - The operand in the assembly line as a `string`.
 >
@@ -27,7 +27,8 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >
 >* `construct_asm_line`:
 >   * **Description:** Parses a line of assembly and updates all data.
->   * **Arguments:** Line of assembly as a `string` and an `isa` object.
+>   * **Arguments:** Line of assembly as a `string` and an
+>                    [`isa`](#isa-instruction-set-architecture) object.
 >
 >### Destructors
 >
@@ -41,9 +42,9 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >>   * **Return Value:** Name of the assembly line's file of origin as a
 >>                       `string`.
 >>* `line_num`
->>   * **Return Value:** Name assembly line's line number in its file.
+>>   * **Return Value:** The assembly line's line number in its file.
 >>* `text`
->>   * **Return Value:** The assembly line as text as a `string`.
+>>   * **Return Value:** The assembly line as a `string`.
 >>* `label`
 >>   * **Return Value:** The assembly line's label as a `string`.
 >>
@@ -54,9 +55,10 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >>#### General
 >>
 >>* `assemble`
->>   * **Description:** Provide the assembled program data corresponding to this
+>>   * **Description:** Provides the assembled program data corresponding to this
 >>                      assembly line.
->>   * **Arguments:** `isa` object and `symbol_table` `string` to `int` `map`
+>>   * **Arguments:** [`isa`](#isa-instruction-set-architecture) object and
+>>                    [`symbol_table`](#data-members-3) `string` to `int` `map`
 >>                     object.
 >>   * **Return Value:** The program data as an `int`.
 >
@@ -92,9 +94,10 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >
 >### Data Members
 >
->* `code_map` - Maps operation names to `code_macro` objects. Type `map`.
->* `style` - List that holds the specified order of assembly line elements and
->            their delimiters. Type `string` `list`.
+>* `code_map` - Maps operation names as `string` objects to
+>               [`code_macro`](#code_macro) objects. Type `map`.
+>* `style` - Ordered `list` object that holds the specified order of assembly
+>            line elements and their delimiters.
 >
 >### Constructors
 >
@@ -152,7 +155,7 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >### Description
 >
 >>This object implements a code macro. This object contains the relationship
->>between an operation code, an operand, and the assembled program data.
+>>between an operation code, an operand, and their assembled program data.
 >
 >### Base Class
 >
@@ -168,7 +171,7 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >### Constructors
 >
 >* `construct_code_macro`
->   * **Description:** Constructs the code macro object.
+>   * **Description:** Constructs the code macro object and updates all data.
 >   * **Arguments:** Operand template and program data template as `string`
 >                    objects and the operation code as an `int`.
 >
@@ -224,20 +227,23 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >### Data Members
 >
 >* `pc` - The program counter as an `int`.
->* `symbol_table` - Maps `labels`, including `data` `labels`, to their address
->                   in program memory as an `int`
->* `isa` - The `isa` object created from and ISA file.
->* `asm_files` - Ordered list of assembly and include files as a `list` of
->                `strings`.
+>* `symbol_table` - Maps `labels`, including variable names, as `strings` to
+>                   their address in program memory as an `int` objects. Type
+>                   `map`.
+>* `isa` - The [`isa`](#isa-instruction-set-architecture) object created from an
+>          ISA file.
+>* `asm_files` - Ordered `list` object of assembly and include file names as
+>                `string` objects.
 >* `asm_prog` - Ordered `list` of `asm_line` objects.
 >
 >### Constructors
 >
 >* `construct_assembler`
->   * **Description:** Constructs the assembler object and the `isa` object
+>   * **Description:** Constructs the assembler object and the
+>                      [`isa`](#isa-instruction-set-architecture) object
 >                      contained in it. `asm_files` data is also updated.
->   * **Arguments:** Ordered list of files to be assembled as a `string` `list`
->                    and name of ISA file as a `string`.
+>   * **Arguments:** Ordered `list` of file names as `string` objects to be
+>                    assembled and the name of ISA file as a `string`.
 >
 >### Destructors
 >
@@ -257,7 +263,7 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >>
 >>* `first_pass`
 >>   * **Description:** Performs the first pass on the assembly and include
->>                      `file` objects. This populates the `symbol_table` and
+>>                      `file` objects. This updates the `symbol_table` and
 >>                      `asm_prog` data.
 >>   * **Arguments:** None.
 >>   * **Return Value:** None.
@@ -279,9 +285,70 @@ Joshua Archibald, Steven Lei, Christian Miranda
 >
 >### Error Handling
 >
->>Displays the appropriate error message to the user if any method calls another
->>method that is unsuccessful. In this case the assembly process continues but
->>a machine code `file` object will not be generated.
+>>Displays the appropriate error message to the user if any method is
+>>unsuccessful. In this case the assembly process continues but a machine code
+>>`file` object will not be generated.
+>
+>### Helper Functions
+>
+>>None.
+
+## expression
+
+>### Description
+>
+>>This object implements an expression. This object can evaluate `string`
+>>expressions that contain `string` representations of the supported
+>>[`operator`] objects and `int` objects.
+>
+>### Base Class
+>
+>>None.
+>
+>### Data Members
+>
+>* `expression` - The expression as a `string`.
+>
+>### Constructors
+>
+>* `construct_expression`
+>   * **Description:** Constructs the expression object and updates all data.
+>   * **Arguments:** The expression as a `string`.
+>
+>### Destructors
+>
+>* `destruct_expression`
+>
+>### Methods
+>
+>>#### Accessors
+>>
+>>>None.
+>>
+>>#### Modifiers
+>>
+>>>None.
+>>
+>>#### General
+>>
+>>* `evaluate`
+>>   * **Description:** Provides the `int` equivalent of the expression.
+>>   * **Arguments:** None.
+>>   * **Return Value:** None.
+>
+>### Operators
+>
+>>None.
+>
+>### Type Conversions
+>
+>>None.
+>
+>### Error Handling
+>
+>>`evaluate` returns `NULL` if the string expression contains symbols that are
+>>not either `int` or supported `operator` objects or the `(` and `)` `char`
+>>objects.
 >
 >### Helper Functions
 >
