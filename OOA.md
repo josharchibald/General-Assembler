@@ -26,9 +26,6 @@ an object. Includes information on what is instantiated within the class.
 
 - <ins>Methods</ins>: Operations that can be preformed on this object.
 
-- <ins>Modifiers</ins>: A method that only modifies state of an object.
-
-- <ins>General</ins>: Any other type of method.
 
 - <ins>Operators</ins>: Primitive operators (eg: `+`, `-`, `/`, `*`, etc) that
 can be used on this object - what operators are overloaded on this object.
@@ -387,7 +384,7 @@ ISA file.
 * `construct_assembler`
     
     * **Description:** Constructs the assembler object and the
-    [`isa`](#isa-instruction-set-architecture) object contained in it. 
+    [`isa`](#isa-instruction-set-architecture) object contained in it.
     `asm_files` data is also updated.
     
     * **Arguments:** Ordered `list` of file names as `string` objects to be
@@ -472,7 +469,7 @@ None.
 
 This object implements an expression. This object can evaluate `string`
 expressions that contain `string` representations of the supported
-[`operator`] objects and `int` objects.
+[`operator`](#operator) objects and `int` objects.
 
 ### Base Class
 
@@ -556,25 +553,139 @@ objects.
 
 None.
 
-## Main Loop 
+## operator
+
+### Description
+
+---
+
+This object implements an operator. This object can evaluate `int` objects in
+expression. These objects respect a priority among other `operator` objects, can
+specify the number of `int` it performs and operation on, and has a `string`
+representation.
+
+### Base Class
+
+---
+
+None.
+
+### Data Members
+
+---
+
+* `priority` - The operator's priority with respect to other `operator` objects
+represented as an `int`.
+
+* `num_operands` - The number of `int` objects evaluated on by the operator.
+
+* `symbol` - The operator's `string` representation.
+
+* `evaluate_func_ptr` - A function pointer to the operation between the `int`
+objects.
+
+### Constructors
+
+---
+
+* `construct_operator`
+    
+    * **Description:** Constructs the operator object and updates all data.
+    
+    * **Arguments:** The operator's priority and number of operands as `int`
+objects, the operand symbol as a `string`, and an evaluation function pointer.
+
+### Destructors
+
+---
+
+* `destruct_operator`
+
+### Methods
+
+---
+#### Accessors
+
+---
+
+* `priority`
+    * **Return Value:** The operators priority as an `int`.
+
+* `num_operand`
+    * **Return Value:** The number of operands the operator operates on.
+
+* `symbol`
+
+    * **Return Value:** The operand's `string` representation.
+
+
+#### Modifiers
+
+---
+
+None.
+
+#### General
+
+---
+
+* `evaluate`
+    
+    * **Description:** Provides the `int` result of the specified operation on
+    the specified number of `int` objects.
+    
+    * **Arguments:** The specified number of `int` objects.
+    
+    * **Return Value:** `int` result of operation.
+
+### Operators
+
+---
+
+None.
+
+### Type Conversions
+
+---
+
+None.
+
+### Error Handling
+
+---
+
+None.
+
+### Helper Functions
+
+---
+
+None.
+
+## Main Loop
 
 The main loop is not a class, but rather constructs instances of the classes we
-have described in this document and operates on them to complete the ultimate 
-goal of producing runnable machine code. These are steps it will take: 
+have described in this document and operates on them to complete the ultimate
+goal of producing runnable machine code. These are steps it will take:
 
-1) Construct the `isa` object. 
+1) Use user input to extract an ordered `list` of file names of the `files` to
+assemble as well as the file name of the
+[`isa`](#isa-instruction-set-architecture) `file` as `string` objects.
 
-2) Parse the ISA descriptor file to create a map of `code_macro` objects
-belonging to the ISA object. 
+2) Create an [`assembler`](#assembler) object using the extracted objects which
+creates the [`isa`](#isa-instruction-set-architecture) object, creating
+[`code_macro](#code_macro) object's.
 
-3) Construct an `asm_line` object which will be continuously updated.
+3) Run the `first_pass` method of the [`assembler`](#assembler) object which
+uses the [`isa`](#isa-instruction-set-architecture) object to update its date
+members.
 
-4) Do the pass by calling the `first_pass` method of the `assembler` object,
-This will update forward references.
+4) If errors occur end the program. Note that the appropriate error messages are
+displayed within internal function calls.
 
-5) Do the second pass, calling the `assemble` method belonging to the `asm_line`
-object for each line of the input file. Note that the `asm_line` object will be
-instantiated once and update to reflect the contents of a given line in the
-input file.
+5) If no errors occur in the first pass, run the `second_pass` method which uses
+the [`isa`](#isa-instruction-set-architecture) object and internal data to
+produce machine code and a listing file.
 
-
+6) End the program. Note that If errors occurred in the previous step no object
+file would be produced.
