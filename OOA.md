@@ -674,14 +674,14 @@ assemble as well as the file name of the
 
 2) Create an [`assembler`](#assembler) object using the extracted objects which
 creates the [`isa`](#isa-instruction-set-architecture) object, creating
-[`code_macro](#code_macro) object's.
+[`code_macro`](#code_macro) object's.
 
 3) Run the `first_pass` method of the [`assembler`](#assembler) object which
-uses the [`isa`](#isa-instruction-set-architecture) object to update its date
+uses the [`isa`](#isa-instruction-set-architecture) object to update its data
 members.
 
-4) If errors occur end the program. Note that the appropriate error messages are
-displayed within internal function calls.
+4) If errors occur in the first pass end the program. Note that the appropriate
+error messages are displayed within internal function calls.
 
 5) If no errors occur in the first pass, run the `second_pass` method which uses
 the [`isa`](#isa-instruction-set-architecture) object and internal data to
