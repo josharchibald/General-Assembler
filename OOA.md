@@ -318,7 +318,7 @@ None.
 * `prog_data`
     * **Description:** Provides the program data corresponding to an operand.
     * **Arguments:** An operand as a `string`.
-    * **Return Value:** The program data as an `int`.
+    * **Return Value:** The program data as an `string`.
 
 ### Operators
 
