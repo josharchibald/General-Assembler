@@ -19,8 +19,7 @@ any white space between the last character and the end of the line.
 All things mentioned in this specification are case insensitive unless otherwise
 stated.
 
-Henceforth, mention of AVR syntax and grammar[^1] will be in reference to this
-resource
+Henceforth, mention of AVR ISA will be in reference to this resource
 [AVR® Instruction Set Manual (microchip.com)](https://www.microchip.com).
 
 How general is general? GenA can assemble code to **any** digital processor.
@@ -48,24 +47,23 @@ user specified ISA files (see [ISA File](#isa-file)). GenA is command line based
 
 ### Assembly Files
 
-GenA must take in either a list of file names or a specified folder containing a
-minimum of one assembly file via the command line
-(see [User Interface](#user-interface)). All assembly files must have the same
-extension.
+GenA takes in, through the command line, the path to an assembly file.
+(see [User Interface](#user-interface)). All included assembly files (see
+[Pseudo Operations](#pseudo-operations)) must share the same extension as this
+first file. Assembly begins with that first file.
 
-Assembly files must adhere to the syntax and grammar specified in the user
-provided ISA file (see the [ISA File](#isa-file)).
-GenA is distributed with an AVR SGrammer file and it can be used to assemble AVR
-Assembly programs.
+Assembly files must adhere to the ISA specified in the user provided ISA file
+(see the [ISA File](#isa-file)). GenA is distributed with an AVR ISA file
+(avr_isa.txt) and it can be used to assemble AVR Assembly programs. The program
+counter can be referenced in assembly lines using the `$` special character.
 
 ### Include Files
 
-Include files[^2] are optional but will also be included in the list of files or
-the specified input folder (see [User Interface](#user-interface)). Include
-files must have extension `.inc` and are used to store symbolic constants. They
-can only be referenced by assembly files through the .include pseudo-op
-(see [Pseudo Operations](#pseudo-operations)). Comments in include files can be
-declared by using the “;” character  and end with the end of the line.
+Include files must have extension `.inc` and are used to store symbolic
+constants. These constants can only be used in assembly files that include these
+files (see [Pseudo Operations](#pseudo-operations) for file inclusion). Comments
+in include files can be declared by using the “;” character  and end with the
+end of the line.
 
 ### Pseudo Operations
 
@@ -87,11 +85,12 @@ format specified. The supported pseudo operations are:
 
 #### File Inclusion
 
-A file can reference another file by including it in the following format:
+A file includes another file by using following format:
 
-`.include <filename>`
+`.include "[path to file]"`
 
-The file must an assembly or include file.
+The file must an assembly or include file and the path is relative to the file
+that includes it.
 
 During assembly, the contents of the included assembly files are put
 in place of this pseudo operation. Files that have already been included by
@@ -123,10 +122,11 @@ variables in other files. Local variables must be declared like so:
 
 `VariableName: BYTECOUNT`
 
-Global variables are variables that must be uniquely named across all other global
-variables and all local variables and all labels in all files. For example, if
-there is a global “count” variable in one file, no other file can have a global
-or local “count” variable or label. Global variables must be declared like so:
+Global variables are variables that must be uniquely named across all other
+global variables and all local variables and all labels in all files. For
+example, if there is a global “count” variable in one file, no other file can
+have a global or local “count” variable or label. Global variables must be
+declared like so:
 
 `.global VariableName: BYTECOUNT`
 
@@ -152,7 +152,8 @@ The `.org` pseudo operation is used in the following manner:
 `.org <ADDRESS>`
 
 to set the line in code it precedes to that address in program memory. More on
-this piece of memory in the [ISA file](#isa-file) section.
+this piece of memory in the [ISA file](#isa-file) section. The start of assembly
+will default be 0 unless otherwise set by `.org`.
 
 #### Constant Literals
 
@@ -189,7 +190,7 @@ An example definition could be:
 ```
 
 For assembly, whenever a string matching any constant is found in the
-operands[^3] of an assembly file[^4], it will be replaced with its corresponding
+Operand of an assembly line, it will be replaced with its corresponding
 symbolic value. Symbolic value names must be distinct across all include files.
 
 #### In-Line Expressions
@@ -205,14 +206,14 @@ files of in the folder specified by the user through the command line (see
 (avr_isa.txt) and if the user wants to supply their own for another processor,
 it must be in the following format.
 
-The first line must be the absolute path to a C++ file. This file functions only
+The first line must be the relative path to a C++ file. This file functions only
 within the scope of this ISA file and the standard for such a file is rigorously
 defined and so its format, as it pertains to the ISA file, will briefly
 explained without an entirely new section. This C++ file must contain one or
 more functions with the **case sensitive** names `F1, F2, F3, ...` and so on.
 These functions will be discussed in detail later. An example is as follows:
 
-`C:\Users\user\GenA_ISA\functions.cpp`
+`"C:\Users\user\GenA_ISA\functions.cpp"`
 
 The second line must be the decimal representation of the number of bits in a
 single word of the processor's program data then the data data separated by a
@@ -237,7 +238,7 @@ a line of assembly. A line of assembly can contain the following elements:
 Delimiters must be distinct, and the last element must be the Comment, which is
 delimited by the end of the line. The other elements can be arranged in any
 order. In this first line there cannot be white space between any element and
-its following delimiter unless the delimiter is a white space. An example of 
+its following delimiter unless the delimiter is a white space. An example of
 this line is as follows:
 
 `Label: OpName Operand; Comment`
@@ -278,8 +279,12 @@ functions specified in those Code Macros are used to turn the `OpCode` and the
 `Operand`, in the form of symbols and values, into machine code.
 
 Each function must take in the `OpCode` as an integer, and each `Val` as a
-string. Each function must output and integer that fits into the specified bit
-count for the Code Macro it is used in.
+string. Each value will be the entire string after the previous Symbol and
+before the next Symbol or the end of the line **excluding white space**. Each
+function must output a signed integer that fits into the specified bit count for
+the Code Macro it is used in. An `n` bit number should be between
+`-2^(n-1) - +2^n - 1`. Each function has access to a global variable called `pc`
+for the program counter.
 
 For example the Code Macro for the instruction `ADD Rd, Rs` might look as
 follows:
@@ -294,23 +299,24 @@ of assembly that looks like this:
 
 the inputs to `F1` would be `AA` as an integer and `1` and `2` as strings. These
 could be converted to decimals and concatenated to the `OpCode` to produce the
-instruction but in general, Code Macros and their accompanying functions can
+instruction. In general, Code Macros and their accompanying functions can
 produce the ISA for **any** digital processor.
 
 ## Outputs
 
-Upon successful completion, GenA will output a “[output_name] Assembled” message.
-GenA outputs two files, whose names are specified on the command line, to a single
-folder, whose name is also specified on the command line (see [User Interface](#user-interface)).
-The first is the machine code object file. One object file will be produced per
-successful assembly, and it will follow Intel HEX format.
+Upon successful completion, GenA will output a complete message to the command
+line. GenA can output two files, whose names are specified on the command line,
+to a single folder, whose name is also specified on the command line (see
+[User Interface](#user-interface)). The first is the machine code object file.
+One object file will be produced per successful assembly, and it will follow
+Intel HEX format and thus have `.hex` extension.
 
-The second is a listing file (.lst). The first thing on every line of the listing
-file is the line number relative to the listing file. Everything past the “;”
-character in a line is considered a comment. Comments contain the header, the
-symbol table, and user code. For lines where user code has instructions, the program
-data and address precede the comment in hexadecimal format. An example portion of
-a listing file output could be:
+The second is a listing file (`.lst`). The first thing on every line of the
+listing file is the line number relative to the listing file. Everything past
+the “;” character in a line is considered a comment. Comments contain the
+header, the symbol table, and user code. For lines where user code has
+instructions, the program data and address precede the comment in hexadecimal
+format. An example portion of a listing file output could be:
 
 ```
 
@@ -325,111 +331,134 @@ a listing file output could be:
 
 ```
 
-## User Interface
+---
 
-To use GenA the user should first put the provided “gena” executable in their
-executable folder (on *Nix like environments, this is either in “/usr/local/bin”
-or “/usr/bin”; on Windows this is in "%LocalAppData%\Programs” or any directory
-in the %PATH% environment variable). Alternatively, users can just make symbolic
-links to these directories. Now the user can run GenA by typing “gena” in the
-parent directory of a folder that contains the files the user wishes to assemble
-as well as the SGrammar file (see [Inputs](#inputs)) . Upon running the GenA program,
-the user will be shown a list of commands and their possible arguments. Commands
-not following this format will be ignored:
-
-* `help`  
-
-* the help command will display a scrollable screen that explains how to use
-  GenA in the terminal. The interface is similar to a Linux man page.
-
-* `asm [input_folder] [output_folder] [output_name] [sgrammar_name.txt]`
-
-* the assemble command assembles all the files in the specified input folder
-  with the SGrammar file specified and outputs an object file and listing file
-  with the output name to a folder with the output folder name. The output folder
-  will be located in the parent directory.
-
-* By default, the AVR SGrammar file (avr_sgrammar.txt) is included with  GenA
-  and must be copied into the input folder for usage. However, the user can
-  create their  own SGrammer file and specify it in the input folder (see
-  [Syntax and Grammar File](#syntax-and-grammar-sgrammar-file)).
-
-* If the output folder does not exist, GenA will create it in the same directory.
-
-* If the output file name already exists, GenA will overwrite it ONLY if it
-  successfully assembles
-
-* For more on input and output files see the [Inputs](#inputs) and
-  [Outputs](#outputs) sections.
-
-* `version`
-
-* the version command will display a version number, last update date, and a
-  link to the most recent github repository.
-
-* `exit`
-
-* the exit command will exit the program.
-
-After the asm command is run, and before “[output_name] Assembled” is displayed,
-“Assembling…” is displayed and user input is blocked.
-
-## Error Handling
->
->All previous sections are required to understand this section.
->
->When the user runs the asm command, there are two possible types of errors that
->can occur: file finding errors and file syntax errors. When GenA encounters an
->error, it immediately terminates the assembling process and does not write to
->the target file if it already exists. Thus, if there are multiple syntax errors,
->GenA will only report the first error it finds.
->
->File finding errors occur when specified folders or files are not found. Possible
->errors are:
->
->* `Error - SGrammar [file name] file not found`
->
->* the specified SGrammar file (see [Syntax and Grammar File](#syntax-and-grammar-sgrammar-file))
->   is not found
->
->* `Error - Folder [folder name] not found`
->
->* the specified input folder is not found
->
->* `Error - Main file not found in [folder name]`
->
->* the specified folder does not include a main.s file in the folder specified
->
->* `Error - File [file name] not found in include`
->
->* the specified folder does not include the .inc or .asm file referenced by other
->  files through the .include pseudo operation
->
->File syntax errors occur when files have syntax errors. This could be:
->
->* `Error - Style mismatch in file [file name] at line [line number]`
->
->* the specified line of code in the specified file is not formatted as according
->  to the style (first line) in the SGrammar file (see [Syntax and Grammar File]
->  (#syntax-and-grammar-sgrammar-file))
->
->* `Error - Duplicate local reference of [label/variable] in [file]`
->
->* the specified line of code in the the specified file has a two local
->  variables/global labels that are the same
->
->* `Error - Duplicate global reference of [label/variable]`
->
->* the code contains two local/global variables or labels that are the same name
+**All previous sections are required to understand the next two sections.**
 
 ---
 
-[^1]: Syntax refers to the style in which the assembly is written, and grammar
-refers to the interactions between the assembly code and the machine code as
-defined by a processor’s instruction set and assembly manual.
+## User Interface
 
-[^2]: Not to be confused with the File inclusion pseudo operation.
+GenA is command line based. To use GenA the user should first put the provided
+`gena` executable in their executable folder (on *Nix like environments, this is
+either in “/usr/local/bin” or “/usr/bin”; on Windows this is in
+"%LocalAppData%\Programs” or any directory in the %PATH% environment variable).
+Alternatively, users can just make symbolic links to these directories. Now the
+user can run the `gena` command from the terminal with the following flags:
 
-[^3]: For more on exactly what “the operands” means see the [Assembly Files](#assembly-files) section.
+* `-h`  
 
-[^4]: Not another include file.
+  * The help flag will display a scrollable screen that explains how to use GenA
+    in the terminal. The interface is similar to a Linux man page.
+
+* `-f`
+
+  * This flag must be followed by the relative path to the main assembly file
+    for the program the user wishes to assemble.
+
+* `-i`
+
+  * This flag must be followed by the relative path of the ISA file for the
+    processor the user wishes GenA to assemble for.
+
+* `-o`
+
+  * This flag must be followed by the relative path of the folder the user
+    wishes the output to go to. Outputs will share the folders name. If the
+    folder does not exist it will be created. If the folder does exists, files
+    within maybe overwritten.
+
+* `-l`
+
+  * This flag must be present for a listing (.`lst`) file to be produced.
+
+* `-v`
+
+  * the version flag will display a version number, last update date, and a link
+    to the most recent github repository.
+
+Flags and their arguments must be separated by spaces. If either the files or
+the folders flags are used, the `-i` flag must be used.
+
+## Error Handling
+
+If an error of any kind occurs, all file outputs will not be produced.
+
+All errors and their messages are as follows:
+
+* The `-i` flag is not specified when the `-f` flag is. Stops program.
+
+  * `Error: missing ISA file`
+
+* The file after the `-f` cannot be found. Stops program.
+
+  * `Error: [file path] file not found`
+
+* The C++ file specified in the first line of the ISA file cannot be found.
+  Stops program.
+
+  * `Error: ISA file [ISA file path] C++ file [C++ file path] not found`
+
+* Lines two or three in the ISA file are not configured as specified. Stops the
+  program.
+  
+  * `Error: ISA file [ISA file path] missing memory information on line [line number]`
+
+* Line four in the ISA file contains repeated delimiters. Stops program.
+  
+  * `Error: ISA file [ISA file path] line 4 repeated delimiter '[repeated delimiter]' for [element] and [element]`
+
+* Line four in the ISA file is missing elements. Stops program.
+  
+  * `Error: ISA file [ISA file path] line 4 missing element(s): [missing element(s)]`
+
+* The OpCode for a Code Macro is not a valid hexadecimal number.
+
+  * `Error: ISA file [ISA file path] line [line number] invalid OpCode "[Opcode]"`
+
+* A Code Macro is formatted incorrectly.
+
+  * `Error: ISA file [ISA file path] line [line number] invalid string "[invalid string]"`
+
+* An included file is not of the right extension.
+
+  * `Error: Assembly file [file path] line [line number] file [file path] has invalid extension`
+
+* An included file cannot be found.
+
+  * `Error: Assembly file [file path] line [line number] file [file path] cannot be found`
+
+* A line of assemble is formatted incorrectly.
+
+  * `Error: Assembly file [file path] line [line number] invalid string "[invalid string]"`
+
+* A pseudo operation is not recognized.
+
+  * `Error: Assembly file [file path] line [line number] has unrecognized pseudoOp [pseudoOp]`
+
+* A line of assemble has an Operand with no OpName.
+
+  * `Error: Assembly file [file path] line [line number] has Operand with no OpName [line elements]`
+
+* There are duplicate labels.
+
+  * `Error: Assembly file [file path] line [line number] and Assembly file [file path] line [line number] have duplicate label [label name]`
+
+* An OpName is not recognized.
+
+  * `Error: Assembly file [file path] line [line number] has unrecognized OpName [line elements]`
+
+* An Operand is invalid.
+
+  * `Error: Assembly file [file path] line [line number] invalid Operand [line elements]`
+  * The program will display this message if a function used from the C++ file
+    supplied in the ISA file returns `NULL`. It is up to the function to display
+    a more detailed error message.
+
+* Memory limit exceeded.
+
+  * `Error: Assembly file [file path] line [line number] exceeds [memory space] memory limit of [number of words] words`
+
+* An instruction is too large.
+
+  * `Error: Assembly file [file path] line [line number] instruction larger than [number of bits] bits [line elements]`

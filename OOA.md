@@ -366,8 +366,15 @@ None.
 
 * `pc` - The program counter as an `int`.
 
+* `data_used` - The amount of data memory space used by the program being
+assembled as an `int`
+
 * `symbol_table` - Maps `labels`, including variable names, as `strings` to
 their address in program memory as an `int` objects. Type `map`.
+
+* `ref_table` - Maps `labels`, including variable names, as `strings` to
+the lines in assembly they are defined and referenced as a `list` of `int` 
+objects. Type `map`.
 
 * `isa` - The [`isa`](#isa-instruction-set-architecture) object created from an
 ISA file.
@@ -419,7 +426,8 @@ None.
 * `first_pass`
     
     * **Description:** Performs the first pass on the assembly and include
-    `file` objects. This updates the `symbol_table` and `asm_prog` data.
+    `file` objects. This updates the `symbol_table`, `ref_table`, `asm_prog`,
+     and the `data_used` data.
     
     * **Arguments:** None.
     
@@ -429,6 +437,7 @@ None.
     
     * **Description:** Performs the second pass on the `asm_line` objects. This
     assembles all the code and writes to machine code and listing `file` objects.
+    this updates the `pc`, `asm_prog`, and the `data_used` data.
     
     * **Arguments:** None.
     
@@ -688,4 +697,4 @@ the [`isa`](#isa-instruction-set-architecture) object and internal data to
 produce machine code and a listing file.
 
 6) End the program. Note that If errors occurred in the previous step no object
-file would be produced.
+file or list would be produced.
