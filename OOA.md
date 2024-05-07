@@ -569,9 +569,9 @@ None.
 ---
 
 This object implements an operator. This object can evaluate `int` objects in
-expression. These objects respect a priority among other `operator` objects, can
-specify the number of `int` it performs and operation on, and has a `string`
-representation.
+expressions. These objects respect a priority among other `operator` objects,
+and has a `string` representation. This object can perform an operation and two
+`int` objects.
 
 ### Base Class
 
@@ -585,8 +585,6 @@ None.
 
 * `priority` - The operator's priority with respect to other `operator` objects
 represented as an `int`.
-
-* `num_operands` - The number of `int` objects evaluated on by the operator.
 
 * `symbol` - The operator's `string` representation.
 
@@ -620,9 +618,6 @@ objects, the operand symbol as a `string`, and an evaluation function pointer.
 * `priority`
     * **Return Value:** The operators priority as an `int`.
 
-* `num_operand`
-    * **Return Value:** The number of operands the operator operates on.
-
 * `symbol`
 
     * **Return Value:** The operand's `string` representation.
@@ -641,9 +636,9 @@ None.
 * `evaluate`
     
     * **Description:** Provides the `int` result of the specified operation on
-    the specified number of `int` objects.
+    two `int` objects.
     
-    * **Arguments:** The specified number of `int` objects.
+    * **Arguments:** Two `int` objects.
     
     * **Return Value:** `int` result of operation.
 
@@ -691,8 +686,8 @@ members.
 4) If errors occur in the first pass end the program. Note that the appropriate
 error messages are displayed within internal function calls.
 
-5) If no errors occur in the first pass, run the `second_pass` method which uses
-the [`isa`](#isa-instruction-set-architecture) object and internal data to
+5) If no errors occur in the first pass, run the `second_pass` method which
+uses the [`isa`](#isa-instruction-set-architecture) object and internal data to
 produce machine code and a listing file.
 
 6) End the program. Note that If errors occurred in the previous step no object

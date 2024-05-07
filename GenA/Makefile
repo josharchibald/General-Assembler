@@ -22,6 +22,7 @@ all: $(EXECUTABLE)
 $(EXECUTABLE): $(OBJECTS)
 	$(CXX) $(OBJECTS) -o $@
 	sudo mv $@ /usr/local/bin/
+	rm -f $(OBJECTS)
 
 # General rule for object files
 %.o: %.cpp

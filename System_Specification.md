@@ -339,55 +339,61 @@ format. An example portion of a listing file output could be:
 
 ## User Interface
 
-GenA is command line based. To use GenA the user should first put the provided
-`gena` executable in their executable folder (on *Nix like environments, this is
-either in “/usr/local/bin” or “/usr/bin”; on Windows this is in
-"%LocalAppData%/Programs” or any directory in the %PATH% environment variable).
-Alternatively, users can just make symbolic links to these directories. Now the
-user can run the `gena` command from the terminal with the following flags:
+GenA is command line based. To use GenA the user must first clone the GitHub
+repository `https://github.com/josharchibald/General-Assembler`. The user must
+then navigate to the `General-Assembler/GenA` directory and run `make`. Now the
+command `gena` can be run from anywhere in the terminal. `gena` is used with
+the following arguments.
 
 * `-h`  
 
-  * The help flag will display a usage message.
+  * (Optional) The help flag will display a usage message. Stops the program.
 
 * `-f`
 
-  * This flag must be followed by the relative path to the main assembly file
-    for the program the user wishes to assemble.
+  * The main file flag must be followed by the relative path to the main
+    assembly file for the program the user wishes to assemble.
 
 * `-i`
 
-  * This flag must be followed by the relative path of the ISA file for the
-    processor the user wishes GenA to assemble for.
+  * The ISA file flag must be followed by the relative path of the ISA file for
+    the processor the user wishes GenA to assemble for.
 
 * `-o`
 
-  * This flag must be followed by the relative path of the folder the user
-    wishes the output to go to. Outputs will share the folders name. If the
-    folder does not exist it will be created. If the folder does exists, files
-    within maybe overwritten.
+  * (Optional) The output folder flag must be followed by the relative path of
+    the folder the user wishes the output to go to. Outputs will share the
+    folders name. If the folder does not exist it will be created. If the
+    folder does exists, files within maybe overwritten. If this flag is not
+    specified, this directory takes the default value of a directory with the 
+    same name as the main file, without the extension, in the wordking 
+    directory.
 
 * `-l`
 
-  * This flag must be present for a listing (.`lst`) file to be produced.
+  * The list flag must be present for a listing (.`lst`) file to be produced.
 
 * `-v`
 
-  * the version flag will display a version number, last update date, and a link
-    to the most recent github repository.
+  * the version flag will display a version number, last update date, and a
+    link to the most recent github repository. Stops the program.
 
-Flags and their arguments must be separated by spaces. If either the files or
-the folders flags are used, the `-i` flag must be used.
+Flags and their arguments must be separated by spaces. Each path flag, `-f`,
+`-i`, and `-o`, can only be used once.
 
 ## Error Handling
 
 If an error of any kind occurs, all file outputs will not be produced.
 
-All errors and their messages are as follows:
+All errors are as follows:
 
-* The `-i` flag is not specified when the `-f` flag is. Stops program.
+* The `-i` flag is not specified when the `-f` flag is.
 
-  * `Error: missing ISA file`
+  * Usage error. Stops program.
+
+* The `-f`, `-i`, or `-o` flag has been duplicated.
+
+  * Usage error. Stops program.
 
 * The file after the `-f` cannot be found. Stops program.
 

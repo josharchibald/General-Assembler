@@ -46,7 +46,7 @@ void usageError(char *prog) {
 // modifies a string path variable. If the path has already been set, or the
 // argument is not a valid path the usage error will be called. If this isn't
 // the case, the path is set to the argument.    
-void path_flag_handler(std::string& path, char *arg, char* prog) {
+void path_flag_handler(std::filesystem::path& path, char *arg, char* prog) {
 	// If the path is not empty then the file flag has already been set with
 	// a valid path.
 	if (!path.empty()) {
@@ -69,6 +69,7 @@ void path_flag_handler(std::string& path, char *arg, char* prog) {
 // with zero exit code.
 void version_flag_handler(void) {
 	std::cout << "Version: V.1" << std::endl;
+	std::cout << "Last updated March: 2024" << std::endl;
 	std::cout << "GitHub: https://github.com/josharchibald/General-Assembler" \
 			  << std::endl;
 	exit(EXIT_SUCCESS);
@@ -78,11 +79,11 @@ void version_flag_handler(void) {
 // Main function.
 int main(int argc, char* argv[]) {
     // These variables hold the data parsed from the command line arguments. 
-	std::string main_file_path;
-	std::string isa_file_path;
-	std::string output_folder_path;
+	std::filesystem::path main_file_path;
+	std::filesystem::path isa_file_path;
+	std::filesystem::path output_folder_path;
 	bool list;
-	
+
 	// Call the usage error if there are no command line arguments.
 	if (argc == 1) {
 		// Exits program.
@@ -132,6 +133,7 @@ int main(int argc, char* argv[]) {
 		usageError(argv[0]);
 
 	}
+	
 
 	std::cout << "ISA path: " << isa_file_path << std::endl \
 			  << "Main path: " << main_file_path << std::endl \
