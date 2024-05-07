@@ -245,8 +245,8 @@ None.
 ---
 
 `translate` will return `NULL` if the provided operation name and operand do
-not have a corresponding piece of program data. `parse` will return `NULL` if
-the provided assembly line cannot be parsed.
+not have a corresponding piece of program data. `parse_asm` will return `NULL`
+if the provided assembly line cannot be parsed.
 
 ### Helper Functions
 
@@ -677,9 +677,8 @@ The main loop is not a class, but rather constructs instances of the classes we
 have described in this document and operates on them to complete the ultimate
 goal of producing runnable machine code. These are steps it will take:
 
-1) Use user input to extract an ordered `list` of file names of the `files` to
-assemble as well as the file name of the
-[`isa`](#isa-instruction-set-architecture) `file` as `string` objects.
+1) Use user input to extract the name of the main assembly `file` and the name 
+of the [`isa`](#isa-instruction-set-architecture) `file` as `string` objects.
 
 2) Create an [`assembler`](#assembler) object using the extracted objects which
 creates the [`isa`](#isa-instruction-set-architecture) object, creating

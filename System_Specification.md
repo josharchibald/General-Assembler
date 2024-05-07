@@ -342,14 +342,13 @@ format. An example portion of a listing file output could be:
 GenA is command line based. To use GenA the user should first put the provided
 `gena` executable in their executable folder (on *Nix like environments, this is
 either in “/usr/local/bin” or “/usr/bin”; on Windows this is in
-"%LocalAppData%\Programs” or any directory in the %PATH% environment variable).
+"%LocalAppData%/Programs” or any directory in the %PATH% environment variable).
 Alternatively, users can just make symbolic links to these directories. Now the
 user can run the `gena` command from the terminal with the following flags:
 
 * `-h`  
 
-  * The help flag will display a scrollable screen that explains how to use GenA
-    in the terminal. The interface is similar to a Linux man page.
+  * The help flag will display a usage message.
 
 * `-f`
 
