@@ -1,25 +1,25 @@
-// code_macro.hpp 
-// Include file for the code_macro class.
+// isa.hpp 
+// Include file for the isa class.
 // Revision History:
-// 05/07/24 Joshua Archibald Initial Revision.
+// 05/08/24 Joshua Archibald Initial Revision.
 
 // Included libraries.
 #include <stdlib.h>
 #include <string>
 
-#ifndef CODE_MACRO_HPP
-#define CODE_MACRO_HPP
+#ifndef ISA_HPP
+#define ISA_HPP
 
-class code_macro {
+class isa {
 	// Publicly usable.
 	public:
-		using FuncPtr = void (*)();
 		// Constructor.
-		// Takes in and updates all data.
-		code_macro(size_t op_code, std::string operand_template, FuncPtr func);
+		// Takes in the isa_file_path as a string to parse the isa file and 
+		// update all data.
+		isa(std::string isa_file_path);
 		
 		// Destructor.
-		~code_macro();
+		~isa();
 
 		// Public Methods
 		// This function takes in an operand string and returns its 
@@ -39,4 +39,4 @@ class code_macro {
 		FuncPtr funcPtr_;
 };
 
-#endif // CODE_MACRO_HPP
+#endif // ISAL_HPP

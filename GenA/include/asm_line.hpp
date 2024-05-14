@@ -1,21 +1,19 @@
-// code_macro.hpp 
-// Include file for the code_macro class.
+// asm_line.hpp 
+// Include file for the asm_line class.
 // Revision History:
-// 05/07/24 Joshua Archibald Initial Revision.
+// 05/08/24 Joshua Archibald Initial Revision.
 
 // Included libraries.
 #include <stdlib.h>
 #include <string>
 
-#ifndef CODE_MACRO_HPP
-#define CODE_MACRO_HPP
+#ifndef ASM_LINE_HPP
+#define ASM_LINE_HPP
 
-class code_macro {
+class asm_line {
 	// Publicly usable.
 	public:
-		using FuncPtr = void (*)();
 		// Constructor.
-		// Takes in and updates all data.
 		code_macro(size_t op_code, std::string operand_template, FuncPtr func);
 		
 		// Destructor.
@@ -39,4 +37,4 @@ class code_macro {
 		FuncPtr funcPtr_;
 };
 
-#endif // CODE_MACRO_HPP
+#endif // ASM_LINE_HPP
