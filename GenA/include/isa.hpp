@@ -26,7 +26,7 @@ class isa {
 		// corresponding program data as an int. If an invalid operand is
 		// passed in, this function will return NULL and display an error
 		// message.
-		size_t prog_data(std::string operand);
+		size_t translate(std::string op_name, std::string operand);
 
 	// Private usage only.
 	private:
