@@ -15,7 +15,8 @@ class code_macro {
 	public:
 		using FuncPtr = void (*)();
 		// Constructor.
-		// Takes in and updates all data.
+		// Takes in, and updates all data. Returns NULL and displays error 
+		// message if any argument is invalid.
 		code_macro(size_t op_code, std::string operand_template, FuncPtr func);
 		
 		// Destructor.
