@@ -13,7 +13,7 @@
 class code_macro {
 	// Publicly usable.
 	public:
-		using FuncPtr = void (*)();
+		using FuncPtr = size_t (*)(std::string);
 		// Constructor.
 		// Takes in, and updates all data. Returns NULL and displays error 
 		// message if any argument is invalid.
