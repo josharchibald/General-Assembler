@@ -17,6 +17,9 @@
 
 #define OP_CODE_MAX_SIZE 16
 size_t value_parser(std::string val){
+    if (val.empty()) {
+        return 0;
+    }
     std::cout << "val: " << val << std::endl;
     // get the part of the value that contains the register designator
     char first_char = val[0];
@@ -60,7 +63,7 @@ void print_binary_with_spaces(uint16_t number) {
 }
 // Arithmetic and Logical operations
 // bit code formatting is #### ##rd rrrr dddd , syntax is IST Rd, Rr
-size_t f1(size_t op_code, std::string val1, std::string val2, size_t bit_size) {
+size_t f1(size_t op_code, std::string val1, std::string val2) {
     size_t val1_toi = value_parser(val1);
     size_t val2_toi = value_parser(val2);
     std::cout << "val1 " << val1_toi << std::endl;
@@ -73,7 +76,7 @@ size_t f1(size_t op_code, std::string val1, std::string val2, size_t bit_size) {
     
     default:
     {
-        data = (op_code) << (OP_CODE_MAX_SIZE - bit_size);
+        data = (op_code) << (OP_CODE_MAX_SIZE - 6);
         size_t r_msb = ((val2_toi >> 4)) << 9;
         size_t d_msb = ((val1_toi >> 4)) << 8;
         size_t r_rest = (val2_toi & 0b1111) << 4;
@@ -84,7 +87,7 @@ size_t f1(size_t op_code, std::string val1, std::string val2, size_t bit_size) {
     }
 }
 // formatting is #### KKKK dddd KKKK where dddd 16 - 31
-size_t f2(size_t op_code, std::string val1, std::string val2, size_t bit_size) {
+size_t f2(size_t op_code, std::string val1, std::string val2) {
     size_t val1_toi = value_parser(val1);
     size_t val2_toi = value_parser(val2);
     size_t data;
@@ -95,7 +98,7 @@ size_t f2(size_t op_code, std::string val1, std::string val2, size_t bit_size) {
     switch (op_code)
     {
     default:
-        data = op_code << (OP_CODE_MAX_SIZE - bit_size);
+        data = op_code << (OP_CODE_MAX_SIZE - 4);
         size_t k_first_4 = ((val2_toi) >> 4) << 8;
         size_t k_last_4 = (val2_toi & 0b1111);
         size_t d_last_4 = (val1_toi & 0b1111) << 4;
@@ -103,8 +106,10 @@ size_t f2(size_t op_code, std::string val1, std::string val2, size_t bit_size) {
         return data;
     }
 }
+
+
 // Default ocode format is #### #### dddd ####  
-size_t f3(size_t op_code, std::string val1, std::string val2, size_t bit_size) {
+size_t f3(size_t op_code, std::string val1, std::string val2) {
     size_t val1_toi = value_parser(val1);
     size_t data;
     if(val1_toi < 16) {
@@ -130,11 +135,11 @@ int main() {
     std::string rr = "ZH";
     size_t bit_size = 6;
     size_t opcode = 7;
-    size_t data = f1(opcode, rd, rr, bit_size);
+    size_t data = f1(opcode, rd, rr);
 
     std::string d = "R24";
     std::string k = "200";
-    data = f3(1189, d, k, 11); 
+    data = f3(1189, d, k); 
     print_binary_with_spaces(data);
     return 0;
 }

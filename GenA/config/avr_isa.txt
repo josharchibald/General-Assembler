@@ -1,43 +1,43 @@
-ANDI 7 Val Sym, Val F2 4
-CPI 3 Val Sym, Val F2 4
-ORI 6 Val Sym, Val F2 4
-SBCI 4 Val Sym, Val F2 4
-SBR 6 Val Sym, Val F2 4
-SUBI 5 Val Sym, Val F2 4
-ADC 7 Val Sym, Val F1 6
-ADD 3 Val Sym, Val F1 6
-AND 4 Val Sym, Val F1 6
-BRBC 61 Val Sym, Val F1 6
-BRBS 60 Val Sym, Val F1 6
-CLR 9 Val F1 6
-CP 5 Val Sym, Val F1 6
-CPC 1 Val Sym, Val F1 6
-CPSE 4 Val Sym, Val F1 6
-EOR Val Sym, Val 9 F1 6
-MUL 39 Val Sym, Val F1 6
-OR 10 Val Sym, Val F1 6
-ROL 7 Val F1 6
-SBC 2 Val Sym, Val F1 6
-SUB 6 Val Sym, Val F1 6
-TST 4 Val F1 6
-LD Val Sym, Val Sym+ Val F7 6
-BLD 248 Val Sym, Val F4 8
-MULS 2 Val Sym, Val F4 8
-SBIW 151 Val Sym: Val Sym, Val F4 8
-ADIW 150 Val Sym: Val Sym, Val F2 8
-FMUL 13 Val Sym, Val F5 10
-FMULS 14 Val Sym, Val F5 10
-FMULSU 15 Val Sym, Val F5 10
-MULSU 12 Val Sym, Val F5 10
-ASR 1189 Val F3 11
-COM 1184 Val F3 11
-DEC 1194 Val F3 11
-INC 1187 Val F3 11
-NEG 1185 Val F3 11
-ROR 1191 Val F3 11
-SWAP 1186 Val Sym, Val F3 11
-LD Val Sym, Val F3 11
-LD 9 Val Sym, Val Sym+ F3 11
-LD Val Sym,- Val F3 11
-SER 3839 Val F8 12
-BCLR 4760 Val F6 13
+ANDI 7 Val Sym, Val F2 16
+CPI 3 Val Sym, Val F2 16
+ORI 6 Val Sym, Val F2 16
+SBCI 4 Val Sym, Val F2 16
+SBR 6 Val Sym, Val F2 16
+SUBI 5 Val Sym, Val F2 16
+ADC 7 Val Sym, Val F1 16
+ADD 3 Val Sym, Val F1 16
+AND 4 Val Sym, Val F1 16
+BRBC 61 Val Sym, Val F1 16
+BRBS 60 Val Sym, Val F1 16
+CLR 9 Val F1 16
+CP 5 Val Sym, Val F1 16
+CPC 1 Val Sym, Val F1 16
+CPSE 4 Val Sym, Val F1 16
+EOR Val Sym, Val 9 F1 16
+MUL 39 Val Sym, Val F1 16
+OR 10 Val Sym, Val F1 16
+ROL 7 Val F1 16
+SBC 2 Val Sym, Val F1 16
+SUB 6 Val Sym, Val F1 16
+TST 4 Val F1 16
+LD Val Sym, Val Sym+ Val F7 16
+BLD 248 Val Sym, Val F4 16
+MULS 2 Val Sym, Val F4 16
+SBIW 151 Val Sym: Val Sym, Val F4 16
+ADIW 150 Val Sym: Val Sym, Val F2 16
+FMUL 13 Val Sym, Val F5 16
+FMULS 14 Val Sym, Val F5 16
+FMULSU 15 Val Sym, Val F5 16
+MULSU 12 Val Sym, Val F5 16
+ASR 1189 Val F3 16
+COM 1184 Val F3 16
+DEC 1194 Val F3 16
+INC 1187 Val F3 16
+NEG 1185 Val F3 16
+ROR 1191 Val F3 16
+SWAP 1186 Val Sym, Val F3 16
+LD Val Sym, Val F3 16
+LD 9 Val Sym, Val Sym+ F3 16
+LD Val Sym,- Val F3 16
+SER 3839 Val F8 16
+BCLR 4760 Val F6 16
