@@ -75,10 +75,11 @@ class isa {
         bool valid_style(std::vector<std::string> style); 
                                 
 		// This function takes in a code macro line from the ISA file as a
-		// vector of strings and the isa file path as a string and parses it 
-        // updating the code map data member.
+		// vector of strings and the isa file path as a string and a line 
+        // number as an integer and parses the data updating the code map data 
+        // member. If any of the data is invalid an error message is displayed.
 		void parse_isa_code_macro(std::vector<std::string> isa_line_data, \
-                                  std::string isa_file_path);
+                                  std::string isa_file_path, size_t line_num);
 
         // This function takes i the name of a dynamically linked library and 
         //  function name, both as strings and returns the function pointer to

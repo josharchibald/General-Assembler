@@ -22,9 +22,10 @@
 const size_t PRINC_NUM_MEM = 1;
 const size_t HARV_NUM_MEM = 2;
 const size_t SYTLE_NUM_EL = 4;
-const std::string USER_LIB_NAME = "user_lib";
-const std::vector<std::string> STYLE_ELEMENTS = {"Label", "OpName", "Operand" \
+const std::string USER_LIB_NAME = "/home/joshua/General-Assembler/GenA/user_lib";
+const std::vector<std::string> STYLE_ELEMENTS = {"Label", "OpName", "Operand", \
                                                  "Comment"};
+const size_t LINE_NUM_START = 5; 
 const size_t OP_NAME_IDX = 0;                                                 
 const size_t OP_CODE_IDX = 1;
 // Reverse indicies 1 indexed.
@@ -35,6 +36,7 @@ const size_t NUM_BITS_REV_IDX = 1;
 isa::isa(std::string isa_file_path) {
 	std::string isa_line;
 	std::vector<std::string> isa_line_data;
+    size_t line_num;
 
 	// Create the isa file object. If the file can't be opened display
 	// an error message and exit the program. 
@@ -91,9 +93,11 @@ isa::isa(std::string isa_file_path) {
 	}
 
     // Parse code macros for the rest of the file and update code map data.
+    line_num = LINE_NUM_START;
     while (std::getline(isa_file, isa_line)) {
         isa_line_data = split_by_spaces(isa_line);
-        parse_isa_code_macro(isa_line_data, isa_file_path);
+        parse_isa_code_macro(isa_line_data, isa_file_path, line_num);
+        line_num++;
     }
 }
 
@@ -224,6 +228,7 @@ void isa::parse_isa_mem_data(std::ifstream& isa_file, \
 		             "file: " << isa_file_path << std::endl; 
 		exit(EXIT_FAILURE);
 	}
+    return;
 }
 
 bool isa::valid_style(std::vector<std::string> style) {
@@ -234,20 +239,20 @@ bool isa::valid_style(std::vector<std::string> style) {
 
     valid = true;
     // Loop through the user specified style.
-    for (size_t i; i < style.size(); i++) {
+    for (size_t i = 0; i < style.size(); i++) {
         element = style.at(i);
+        // If the element delimiter is alphanumeric assume the user meant the 
+        // the white space itself as the delimiter.
+        if (std::isalnum(element.back())) {
+            element += ' ';
+        }
+
         // If the element is not in the collection of possible elements, display
         // an error.
         if (std::find(STYLE_ELEMENTS.begin(), STYLE_ELEMENTS.end(), \
             element.substr(0, element.size() - 1)) == STYLE_ELEMENTS.end()) {
             std::cerr << "Error: Invalid element: " << \
             element.substr(0, element.size() - 1) << std::endl; 
-            valid = false;
-        }
-        // If the delimiter is invalid display an error.
-        if (std::isalnum(element.back())) {
-            std::cerr << "Error: Invalid delimiter: " << element.back() << \
-            std::endl; 
             valid = false;
         }
         // If the element has already been found display an error.
@@ -269,54 +274,72 @@ bool isa::valid_style(std::vector<std::string> style) {
 }
 
 void isa::parse_isa_code_macro(std::vector<std::string> isa_line_data, \
-                              std::string isa_file_path) {
+                              std::string isa_file_path, size_t line_num) {
     size_t op_code;
     std::vector<std::string> operand_template;
-    code_macro::FuncPtr funcPtr;
+    code_macro::func_ptr func;
     size_t num_inst_bits;
     size_t len;
     std::string sym_val;
+    bool make;
 
+    make = true;
     len = isa_line_data.size();
 
     // Convert all data to their necessary types before creating the code macro.
-    // If any string is invalid an error message is displayed and the program
-    // exits.
+    // If any string is invalid an error message is displayed and the code macro
+    // is not made.
+    op_code = 0;
     try {
         op_code = std::stoul(isa_line_data.at(OP_CODE_IDX));
     }
     catch (const std::exception& e) {
         std::cerr << "Error: Invalid op code: " << \
-                    isa_line_data.at(OP_CODE_IDX) << " at line 4 of ISA " << \
-                    "file: " << isa_file_path << std::endl;
-        exit(EXIT_FAILURE);
+                    isa_line_data.at(OP_CODE_IDX) << " at line "<< line_num << \
+                    " of ISA " << "file: " << isa_file_path << std::endl;
+        make = false;
     }
 
-    funcPtr = (code_macro::FuncPtr)load_function(USER_LIB_NAME, \
-              isa_line_data.at(len - FUNC_REV_IDX));
+    for (size_t i = OP_CODE_IDX + 1; i < len - FUNC_REV_IDX; i++) {
+        sym_val = isa_line_data.at(i);
+        if ((sym_val.find("Sym") != 0) && (sym_val != "Val")) {
+            std::cerr << "Error: Invalid symbol: " << sym_val << "at line " << \
+                         line_num << " of ISA file: " << isa_file_path << \
+                         std::endl;
+            make = false;
+        }
+        else {
+            operand_template.push_back(sym_val);
+        }
+    }
 
+    func = (code_macro::func_ptr)load_function(USER_LIB_NAME, \
+              isa_line_data.at(len - FUNC_REV_IDX));
+    
+    if (func == NULL) {
+        make = false;
+    }
+
+    num_inst_bits = 0;
     try {
         num_inst_bits = std::stoul(isa_line_data.at(len - NUM_BITS_REV_IDX));
         }
     catch (const std::exception& e) {
         std::cerr << "Error: Invalid number of bits: " << \
                     isa_line_data.at(len - NUM_BITS_REV_IDX) << " at line " << \
-                    "4 of ISA file: " << isa_file_path << std::endl;
-        exit(EXIT_FAILURE);
+                    line_num << " of ISA file: " << isa_file_path << std::endl;
+        make = false;
     }
 
-    // Special care is taken for the operand template as it may be variable 
-    // length.
-    size_t i = OP_CODE_IDX + 1;
-    sym_val = isa_line_data.at(i);
-    while ((sym_val.find("Sym") == 0) || (sym_val == "Val")) {
-        operand_template.push_back(sym_val);
-        i++;
+
+    // Create the code macro and add it to the code map data member if all data
+    // is good.
+    if (make) {
+        code_macro isa_code_macro(op_code, operand_template, func, \
+                                num_inst_bits);
+        code_map_.insert({isa_line_data.at(OP_NAME_IDX), isa_code_macro});
     }
-    // Create the code macro and add it to the code map data member.
-    code_macro isa_code_macro(op_code, operand_template, funcPtr, \
-                              num_inst_bits);
-    code_map_.insert({isa_line_data.at(OP_NAME_IDX), isa_code_macro});
+    return;
 }
 
 void* isa::load_function(const std::string& lib_name, \
@@ -324,7 +347,7 @@ void* isa::load_function(const std::string& lib_name, \
     void* handle = dlopen(lib_name.c_str(), RTLD_LAZY);
     if (!handle) {
         std::cerr << "Error: Cannot open library: " << dlerror() << std::endl;
-        return nullptr;
+        return NULL;
     }
 
     dlerror(); // reset errors
@@ -334,7 +357,7 @@ void* isa::load_function(const std::string& lib_name, \
     if (dlsym_error) {
         std::cerr << "Error: Cannot load symbol: " << dlsym_error << std::endl;
         dlclose(handle);
-        return nullptr;
+        return NULL;
     }
 
     return func;

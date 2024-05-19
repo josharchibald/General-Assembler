@@ -3,7 +3,7 @@
 #
 
 CXX=g++
-CXXFLAGS=-Wall -Wextra -Werror -Wno-long-long -Wno-variadic-macros -fexceptions -std=c++17
+CXXFLAGS=-Wall -Wextra -Werror -Wno-long-long -Wno-variadic-macros -fexceptions -std=c++17 -g
 
 # Define NDEBUG in release build
 ifndef DEBUG

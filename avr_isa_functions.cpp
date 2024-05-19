@@ -63,37 +63,28 @@ void print_binary_with_spaces(uint16_t number) {
 }
 // Arithmetic and Logical operations
 // bit code formatting is #### ##rd rrrr dddd , syntax is IST Rd, Rr
-size_t f1(size_t op_code, std::string val1, std::string val2) {
+size_t F1(size_t op_code, std::string val1, std::string val2) {
     size_t val1_toi = value_parser(val1);
     size_t val2_toi = value_parser(val2);
     std::cout << "val1 " << val1_toi << std::endl;
     std::cout << "val2 " << val2_toi << std::endl;
     size_t data = 0;
-    switch (op_code)
-    {
-    case 61:
-        break;
-    
-    default:
-    {
-        data = (op_code) << (OP_CODE_MAX_SIZE - 6);
-        size_t r_msb = ((val2_toi >> 4)) << 9;
-        size_t d_msb = ((val1_toi >> 4)) << 8;
-        size_t r_rest = (val2_toi & 0b1111) << 4;
-        size_t d_rest = val1_toi & 0b1111;
-        data = data | r_msb | d_msb | r_rest | d_rest;
-        return data;
-    }
-    }
+    data = (op_code) << (OP_CODE_MAX_SIZE - 6);
+    size_t r_msb = ((val2_toi >> 4)) << 9;
+    size_t d_msb = ((val1_toi >> 4)) << 8;
+    size_t r_rest = (val2_toi & 0b1111) << 4;
+    size_t d_rest = val1_toi & 0b1111;
+    data = data | r_msb | d_msb | r_rest | d_rest;
+    return data;
 }
 // formatting is #### KKKK dddd KKKK where dddd 16 - 31
-size_t f2(size_t op_code, std::string val1, std::string val2) {
+size_t F2(size_t op_code, std::string val1, std::string val2) {
     size_t val1_toi = value_parser(val1);
     size_t val2_toi = value_parser(val2);
     size_t data;
     if(val1_toi < 16 && val2_toi < 16) {
         std::cerr << "Value must be in register range 16-31";
-        return NULL;
+        return (size_t)NULL;
     }
     switch (op_code)
     {
@@ -109,12 +100,12 @@ size_t f2(size_t op_code, std::string val1, std::string val2) {
 
 
 // Default ocode format is #### #### dddd ####  
-size_t f3(size_t op_code, std::string val1, std::string val2) {
+size_t F3(size_t op_code, std::string val1, std::string val2) {
     size_t val1_toi = value_parser(val1);
     size_t data;
     if(val1_toi < 16) {
         std::cerr << "Value must be in register range 16-31";
-        return NULL;
+        return (size_t)NULL;
     }
     switch (op_code)
     {
@@ -126,8 +117,20 @@ size_t f3(size_t op_code, std::string val1, std::string val2) {
         return data;
     }
 }
-size_t f4() {
-    
+size_t F4() {
+    return (size_t)NULL;
+}
+size_t F5() {
+    return (size_t)NULL;
+}
+size_t F6() {
+    return (size_t)NULL;
+}
+size_t F7() {
+    return (size_t)NULL;
+}
+size_t F8() {
+    return (size_t)NULL;
 }
 
 int main() {
@@ -135,11 +138,11 @@ int main() {
     std::string rr = "ZH";
     size_t bit_size = 6;
     size_t opcode = 7;
-    size_t data = f1(opcode, rd, rr);
+    size_t data = F1(opcode, rd, rr);
 
     std::string d = "R24";
     std::string k = "200";
-    data = f3(1189, d, k); 
+    data = F3(1189, d, k); 
     print_binary_with_spaces(data);
     return 0;
 }

@@ -1,3 +1,7 @@
+/home/joshua/General-Assembler/avr_isa_functions.cpp
+8
+256
+Label: OpName Operand; Comment
 ANDI 7 Val Sym, Val F2 16
 CPI 3 Val Sym, Val F2 16
 ORI 6 Val Sym, Val F2 16
@@ -13,14 +17,14 @@ CLR 9 Val F1 16
 CP 5 Val Sym, Val F1 16
 CPC 1 Val Sym, Val F1 16
 CPSE 4 Val Sym, Val F1 16
-EOR Val Sym, Val 9 F1 16
+EOR 9 Val Sym, Val F1 16
 MUL 39 Val Sym, Val F1 16
 OR 10 Val Sym, Val F1 16
 ROL 7 Val F1 16
 SBC 2 Val Sym, Val F1 16
 SUB 6 Val Sym, Val F1 16
 TST 4 Val F1 16
-LD Val Sym, Val Sym+ Val F7 16
+LD 9 Val Sym, Val Sym+ Val F7 16
 BLD 248 Val Sym, Val F4 16
 MULS 2 Val Sym, Val F4 16
 SBIW 151 Val Sym: Val Sym, Val F4 16
@@ -36,8 +40,8 @@ INC 1187 Val F3 16
 NEG 1185 Val F3 16
 ROR 1191 Val F3 16
 SWAP 1186 Val Sym, Val F3 16
-LD Val Sym, Val F3 16
+LD 9 Val Sym, Val F3 16
 LD 9 Val Sym, Val Sym+ F3 16
-LD Val Sym,- Val F3 16
+LD 9 Val Sym,- Val F3 16
 SER 3839 Val F8 16
 BCLR 4760 Val F6 16

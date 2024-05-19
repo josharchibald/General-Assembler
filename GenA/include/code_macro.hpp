@@ -14,12 +14,11 @@
 class code_macro {
 	// Publicly usable.
 	public:
-		using FuncPtr = void (*)();
+		using func_ptr = void (*)();
 		// Constructor.
-		// Takes in, and updates all data. Returns NULL and displays error 
-		// message if any argument is invalid.
+		// Takes in, and updates all data.
 		code_macro(size_t op_code, std::vector<std::string> operand_template, \
-                   FuncPtr func, size_t num_inst_bits);
+                   func_ptr func, size_t num_inst_bits);
 		
 		// Destructor.
 		~code_macro();
@@ -39,7 +38,7 @@ class code_macro {
 		// The template for the operands symbols and values.
 		std::vector<std::string> operand_template_;
 		// Function pointer for translating operands to instructions.
-		FuncPtr funcPtr_;
+		func_ptr func_;
         // Number of bits in the instruction.
         size_t num_inst_bits_;
 };
