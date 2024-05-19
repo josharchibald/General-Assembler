@@ -59,6 +59,16 @@ class isa {
 		// string and parses it updating the code map data member.
 		void parse_isa_code_macro(std::string isa_line);
 
+        // This function takes in a vector of strings and returns true or false
+        // the vector represents valid elements and delimiters for the style 
+        // data member.   
+        bool valid_style(std::vector<std::string> style); 
+
+        // This file takes in a path to a file and compiles it to a shared 
+        // library. If The file can not be compiled an error message is 
+        // displayed and the program exits.
+        void compile_to_shared_lib(const std::string& source_file);
+
 		// This function takes in a string and returns a vector that is the 
 		// strings separated by spaces.  
 		std::vector<std::string> split_by_spaces(const std::string& str);
