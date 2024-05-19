@@ -12,7 +12,7 @@
 
 #ifndef ISA_HPP
 #define ISA_HPP
-class asm_line;
+// class asm_line;
 
 class isa {
 	// Publicly usable.
@@ -36,42 +36,55 @@ class isa {
 		// This function takes in a line of assembly as a string and returns an
 		// asm_line object parsed from that string.If the line of assembly is
 		// invalid this function will return NULL and display an error message.
-		asm_line parse_asm(std::string);
+		// asm_line parse_asm(std::string);
 	
 	// Private usage only.
 	private:
 		// Private data members.
-		// Maps operation names to code macros.
-		std::unordered_map<std::string, code_macro> code_map_;
-		// Holds the order of elements and delimiters in a line of assembly.
-		std::vector<std::string> style_;
-		// Holds whether or not the processor is Harvard or Princeton arch.
-		size_t harv_not_princ_;
 		// Holds the word size of the program data, then the data data if they
 		// are separate sections.		
 		std::vector<size_t> word_sizes_;
 		// Holds the memory size, in words, of the program data, then the data
 		// data if they are separate sections.
 		std::vector<size_t> mem_sizes_;
+		// Holds whether or not the processor is Harvard or Princeton arch.
+		size_t harv_not_princ_;
+		// Holds the order of elements and delimiters in a line of assembly.
+		std::vector<std::string> style_;
+		// Maps operation names to code macros.
+		std::unordered_map<std::string, code_macro> code_map_;
 
 		// Helper functions.
-		// This function takes in a code macro line from the ISA file as a
-		// string and parses it updating the code map data member.
-		void parse_isa_code_macro(std::string isa_line);
-
-        // This function takes in a vector of strings and returns true or false
-        // the vector represents valid elements and delimiters for the style 
-        // data member.   
-        bool valid_style(std::vector<std::string> style); 
+		// This function takes in a string and returns a vector that is the 
+		// strings separated by spaces.  
+		std::vector<std::string> split_by_spaces(const std::string& str);
 
         // This file takes in a path to a file and compiles it to a shared 
         // library. If The file can not be compiled an error message is 
         // displayed and the program exits.
         void compile_to_shared_lib(const std::string& source_file);
 
-		// This function takes in a string and returns a vector that is the 
-		// strings separated by spaces.  
-		std::vector<std::string> split_by_spaces(const std::string& str);
+        // This function takes in the isa file object and the isa file path and 
+        // updates the memory data members.
+        void parse_isa_mem_data(std::ifstream& isa_file, \
+                                std::string isa_file_path);
+
+        // This function takes in a vector of strings and returns true or false
+        // the vector represents valid elements and delimiters for the style 
+        // data member.   
+        bool valid_style(std::vector<std::string> style); 
+                                
+		// This function takes in a code macro line from the ISA file as a
+		// vector of strings and the isa file path as a string and parses it 
+        // updating the code map data member.
+		void parse_isa_code_macro(std::vector<std::string> isa_line_data, \
+                                  std::string isa_file_path);
+
+        // This function takes i the name of a dynamically linked library and 
+        //  function name, both as strings and returns the function pointer to
+        // the function.
+        void* load_function(const std::string& lib_name, \
+                            const std::string& func_name);
 };
 
 #endif // ISA_HPP
