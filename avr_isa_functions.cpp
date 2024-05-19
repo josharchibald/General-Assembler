@@ -16,7 +16,7 @@
 #define ZH 31
 
 #define OP_CODE_MAX_SIZE 16
-size_t value_parser(std::string val){
+size_t operator_parser(std::string val){
     if (val.empty()) {
         return 0;
     }
@@ -89,7 +89,7 @@ size_t F2(size_t op_code, std::string val1, std::string val2) {
     switch (op_code)
     {
     default:
-        data = op_code << (OP_CODE_MAX_SIZE - 4);
+        data = op_code << (OP_CODE_FULL_SIZE - 4);
         size_t k_first_4 = ((val2_toi) >> 4) << 8;
         size_t k_last_4 = (val2_toi & 0b1111);
         size_t d_last_4 = (val1_toi & 0b1111) << 4;
@@ -100,8 +100,13 @@ size_t F2(size_t op_code, std::string val1, std::string val2) {
 
 
 // Default ocode format is #### #### dddd ####  
+<<<<<<< HEAD
 size_t F3(size_t op_code, std::string val1, std::string val2) {
     size_t val1_toi = value_parser(val1);
+=======
+size_t f3(size_t op_code, std::string val1, std::string val2) {
+    size_t val1_toi = operator_parser(val1);
+>>>>>>> main
     size_t data;
     if(val1_toi < 16) {
         std::cerr << "Value must be in register range 16-31";
@@ -110,7 +115,7 @@ size_t F3(size_t op_code, std::string val1, std::string val2) {
     switch (op_code)
     {
     default:
-        size_t op_code_first_7 = ((op_code) >> 4) << OP_CODE_MAX_SIZE - 7;
+        size_t op_code_first_7 = ((op_code) >> 4) << OP_CODE_FULL_SIZE - 7;
         size_t op_code_last_4 = (op_code & 0b1111);
         size_t d_shifted = val1_toi << 4;
         data = op_code_first_7 | d_shifted | op_code_last_4;
