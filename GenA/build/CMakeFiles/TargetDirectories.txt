@@ -1,0 +1,4 @@
+/home/joshua/General-Assembler/GenA/build/CMakeFiles/gena.dir
+/home/joshua/General-Assembler/GenA/build/CMakeFiles/clean_all.dir
+/home/joshua/General-Assembler/GenA/build/CMakeFiles/edit_cache.dir
+/home/joshua/General-Assembler/GenA/build/CMakeFiles/rebuild_cache.dir
