@@ -8,15 +8,14 @@
 
 #define XL 26
 #define XH 27
-
 #define YL 28
 #define YH 29
-
 #define ZL 30
 #define ZH 31
 
-#define OPCODE_DEFAULT_LENGTH 16
-#define OPCODE_EXTRA_LENGTH 32
+const size_t OPCODE_DEFAULT_LENGTH = 16;
+const size_t OPCODE_EXTRA_LENGTH = 32;
+
 size_t operator_parser(std::string val){
     if (val.empty()) {
         return 0;
@@ -329,10 +328,11 @@ size_t parse_mov_word(size_t opcode, std::string reg_d, std::string reg_r){
     return opcode_shifted | reg_d_shifted | reg_r_toi;
 }
 // Relative jump and call
-size_t parse_rcall_rjmp(size_t opcode, std::string label){
+size_t parse_rcall_rjmp(size_t opcode, std::string label, const size_t pc){
     size_t opcode_length = 4;
     size_t opcode_shifted = opcode << (OPCODE_DEFAULT_LENGTH - opcode_length);
-    size_t offset = 
+    size_t label_toi = operator_parser(label);
+    size_t offset = label_toi - pc;
     return opcode_shifted | offset;
 }
 // Format #### ###k kkkk ###k kkkk kkkk kkkk kkkk
