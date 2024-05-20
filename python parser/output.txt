@@ -1,146 +1,112 @@
-CLR 9 Val parse_alu_1 16
-LSL 3 Val parse_alu_1 16
-ROL 7 Val parse_alu_1 16
-TST 8 Val parse_alu_1 16
-ADC 7 Val Sym, Val parse_alu_2 16
-ADD 3 Val Sym, Val parse_alu_2 16
-AND 8 Val Sym, Val parse_alu_2 16
-CP 5 Val Sym, Val parse_alu_2 16
-CPC 1 Val Sym, Val parse_alu_2 16
-CPSE 4 Val Sym, Val parse_alu_2 16
-EOR 9 Val Sym, Val parse_alu_2 16
-MOV 11 Val Sym, Val parse_alu_2 16
-MUL 39 Val Sym, Val parse_alu_2 16
-OR 10 Val Sym, Val parse_alu_2 16
-SBC 2 Val Sym, Val parse_alu_2 16
-SUB 6 Val Sym, Val parse_alu_2 16
-ANDI 7 Val Sym, Val parse_alu_imm 16
-CBR 7 Val Sym, Val parse_alu_imm 16
-CPI 3 Val Sym, Val parse_alu_imm 16
-LDI 14 Val Sym, Val parse_alu_imm 16
-ORI 6 Val Sym, Val parse_alu_imm 16
-SBCI 4 Val Sym, Val parse_alu_imm 16
-SBR 6 Val Sym, Val parse_alu_imm 16
-SUBI 5 Val Sym, Val parse_alu_imm 16
-SBRC 126 Val Sym, Val parse_bit_check_load_store 16
-SBRS 127 Val Sym, Val parse_bit_check_load_store 16
-BLD 248 Val Sym, Val parse_bit_check_load_store 16
-BST 250 Val Sym, Val parse_bit_check_load_store 16
-BRCC 488 Val parse_branch 16
-BRCS 480 Val parse_branch 16
-BREQ 481 Val parse_branch 16
-BRGE 492 Val parse_branch 16
-BRHC 493 Val parse_branch 16
-BRHS 485 Val parse_branch 16
-BRID 495 Val parse_branch 16
-BRIE 487 Val parse_branch 16
-BRLO 480 Val parse_branch 16
-BRLT 484 Val parse_branch 16
-BRMI 482 Val parse_branch 16
-BRNE 489 Val parse_branch 16
-BRPL 490 Val parse_branch 16
-BRSH 488 Val parse_branch 16
-BRTC 494 Val parse_branch 16
-BRTS 486 Val parse_branch 16
-BRVC 491 Val parse_branch 16
-BRVS 483 Val parse_branch 16
-BRBC 61 Val Sym, Val parse_branch_with_bit 16
-BRBS 61 Val Sym, Val parse_branch_with_bit 16
-SBI 154 Val Sym, Val parse_clear_set_bit 16
-SBIC 153 Val Sym, Val parse_clear_set_bit 16
-SBIS 155 Val Sym, Val parse_clear_set_bit 16
-CBI 152 Val Sym, Val parse_clear_set_bit 16
-DES 2379 parse_des_ser 16
-SER 3839 Val parse_des_ser 16
-ELPM 38360 parse_full_length 16
-SET 37992 parse_full_length 16
-BREAK 38200 parse_full_length 16
-CLC 37904 parse_full_length 16
-CLH 38008 parse_full_length 16
-CLI 38040 parse_full_length 16
-CLN 37928 parse_full_length 16
-CLS 37992 parse_full_length 16
-CLT 38024 parse_full_length 16
-CLV 37960 parse_full_length 16
-CLZ 37896 parse_full_length 16
-EICALL 38297 parse_full_length 16
-EIJMP 37913 parse_full_length 16
-ELPM 38360 parse_full_length 16
-ICALL 38281 parse_full_length 16
-IJMP 37905 parse_full_length 16
-LPM 38344 parse_full_length 16
-NOP 0 parse_full_length 16
-RET 38280 parse_full_length 16
-RETI 38296 parse_full_length 16
-SEC 37896 parse_full_length 16
-SEH 37976 parse_full_length 16
-SEI 38008 parse_full_length 16
-SEN 37928 parse_full_length 16
-SES 37968 parse_full_length 16
-SEV 37944 parse_full_length 16
-SEZ 37912 parse_full_length 16
-SLEEP 38312 parse_full_length 16
-SPM 38376 parse_full_length 16
-SPM 38392 SymZ+ parse_full_length 16
-WDR 38344 parse_full_length 16
-IN 22 Val Sym, Val parse_io 16
-OUT 23 Val Sym, Val parse_io 16
-DEC 1194 Val parse_ld_st_stck_alu 16
-ASR 1189 Val parse_ld_st_stck_alu 16
-INC 1187 Val parse_ld_st_stck_alu 16
-NEG 1185 Val parse_ld_st_stck_alu 16
-ROR 1191 Val parse_ld_st_stck_alu 16
-SWAP 1186 Val parse_ld_st_stck_alu 16
-ELPM 1158 Val Sym,Z parse_ld_st_stck_alu 16
-ELPM 1159 Val Sym,Z+ parse_ld_st_stck_alu 16
-ELPM 1158 Val Sym,Z parse_ld_st_stck_alu 16
-LAC 1174 SymZ, Val parse_ld_st_stck_alu 16
-LAS 1173 SymZ, Val parse_ld_st_stck_alu 16
-LAT 1175 SymZ, Val parse_ld_st_stck_alu 16
-LD 1024 Val Sym,Z parse_ld_st_stck_alu 16
-LD 1153 Val Sym,Z+ parse_ld_st_stck_alu 16
-LD 1154 Val Sym,-Z parse_ld_st_stck_alu 16
-LPM 1156 Val Sym,Z parse_ld_st_stck_alu 16
-LPM 1157 Val Sym,Z+ parse_ld_st_stck_alu 16
-LSR 1190 Val parse_ld_st_stck_alu 16
-ST 1040 SymZ, parse_ld_st_stck_alu 16
-XCH 1172 SymZ, Val parse_ld_st_stck_alu 16
-LD 1165 Val Sym,X+ parse_ld_st_stck_alu 16
-LD 1166 Val Sym,-X parse_ld_st_stck_alu 16
-LD 1032 Val Sym,Y parse_ld_st_stck_alu 16
-LD 1161 Val Sym,Y+ parse_ld_st_stck_alu 16
-LD 1162 Val Sym,-Y parse_ld_st_stck_alu 16
-POP 1167 Val parse_ld_st_stck_alu 16
-PUSH 1183 Val parse_ld_st_stck_alu 16
-ST 1180 SymX, Val parse_ld_st_stck_alu 16
-ST 1181 SymX+, Val parse_ld_st_stck_alu 16
-ST 1182 Sym-X, Val parse_ld_st_stck_alu 16
-ST 1048 SymY, parse_ld_st_stck_alu 16
-ST 1177 SymY+, parse_ld_st_stck_alu 16
-ST 1178 Sym-Y, parse_ld_st_stck_alu 16
-ST 1169 SymZ+, parse_ld_st_stck_alu 16
-ST 1170 Sym-Z, parse_ld_st_stck_alu 16
-LD 1164 Val Sym,X parse_ld_st_stck_alu 16
-COM 1184 Val parse_ld_st_stck_alu 16
-LDS 20 Val Sym, Val parse_load_store_16 16
-BCLR 2376 Val parse_modify_flag 16
-BSET 296 Val parse_modify_flag 16
-MULS 2 Val Sym, Val parse_mul 16
-MULSU 12 Val Sym, Val parse_mul 16
-FMUL 13 Val Sym, Val parse_mul 16
-FMULS 14 Val Sym, Val parse_mul 16
-FMULSU 15 Val Sym, Val parse_mul 16
-ADIW 150 Val Sym: Val Sym, Val parse_add_sub_word 16
-SBIW 151 Val Sym: Val Sym, Val parse_add_sub_word 16
-RCALL 13 Val parse_rcall_rjmp 16
-RJMP 12 Val parse_rcall_rjmp 16
-STS 21 Val Sym, Val parse_load_store_16 16
-STD 11 SymY+ Val Sym, Val parse_load_store_16 16
-STD 10 SymZ+ Val Sym, Val parse_load_store_16 16
-LD 9 Val Sym,-Y+ Val parse_load_store_16 16
-LD 8 Val Sym,-Z+ Val parse_load_store_16 16
-MOVW 1 Val Sym,: Val Sym, Val Sym,: Val parse_mov_word 16
-JMP 598 Val parse_call_jmp 16
-CALL 599 Val parse_call_jmp 32
-LDS 1152 Val Sym, Val parse_load_store_32 16
-STS 1168 Val Sym, Val parse_load_store_32 32
+ADC 01100000mmmmmmmm 96 Val F1 16
+ADC 01100001oooooooo 97 SymX, Val F1 16
+ADC 01100010oooooooo 98 SymS, Val F1 16
+ADCI 01100011kkkkkkkk 99 Val F1 16
+ADD 01101000mmmmmmmm 104 Val F1 16
+ADD 01101001oooooooo 105 SymX, Val F1 16
+ADD 01101010oooooooo 106 SymS, Val F1 16
+ADDI 01101011kkkkkkkk 107 Val F1 16
+AND 01000100mmmmmmmm 68 Val F1 16
+AND 01000101oooooooo 69 SymX, Val F1 16
+AND 01000110oooooooo 70 SymS, Val F1 16
+ANDI 01000111kkkkkkkk 71 Val F1 16
+CMP 00110000mmmmmmmm 48 Val F1 16
+CMP 00110001oooooooo 49 SymX, Val F1 16
+CMP 00110010oooooooo 50 SymS, Val F1 16
+CMPI 00110011kkkkkkkk 51 Val F1 16
+IN 10010000pppppppp 144 Val F1 16
+JA 10001000rrrrrrrr 136 Val $Val F4 16
+JAE 10001100rrrrrrrr 140 Val $Val F4 16
+JNC 10001100rrrrrrrr 140 Val $Val F4 16
+JB 10001111rrrrrrrr 143 Val $Val F4 16
+JC 10001111rrrrrrrr 143 Val $Val F4 16
+JBE 10001011rrrrrrrr 139 Val $Val F4 16
+JE 10011111rrrrrrrr 159 Val $Val F4 16
+JZ 10011111rrrrrrrr 159 Val $Val F4 16
+JG 10101111rrrrrrrr 175 Val $Val F4 16
+JGE 10111011rrrrrrrr 187 Val $Val F4 16
+JL 10111000rrrrrrrr 184 Val $Val F4 16
+JLE 10101100rrrrrrrr 172 Val $Val F4 16
+JNE 10011100rrrrrrrr 156 Val $Val F4 16
+JNZ 10011100rrrrrrrr 156 Val $Val F4
+JNS 10011000rrrrrrrr 152 Val $Val F4 16
+JNU 10111100rrrrrrrr 188 Val $Val F4 16
+JNV 10101000rrrrrrrr 168 Val $Val F4 16
+JS 10011011rrrrrrrr 155 Val $Val F4 16
+JU 10111111rrrrrrrr 191 Val $Val F4 16
+JV 10101011rrrrrrrr 171 Val $Val F4 16
+LD 10000010oooooooo 130 Sym+S+ Val F1 16
+LD 10000110oooooooo 134 Sym+X+ Val F1 16
+LD 10001010oooooooo 138 Sym-S+ Val F1 16
+LD 10001110oooooooo 142 Sym-X+ Val F1 16
+LD 10010010oooooooo 146 SymS++ Val F1 16
+LD 10010011oooooooo 147 SymS+ Val F1 16
+LD 10010110oooooooo 150 SymX++ Val F1 16
+LD 10010111oooooooo 151 SymX+ Val F1 16
+LD 10011010oooooooo 154 SymS-+ Val F1 16
+LD 10011110oooooooo 158 SymX-+ Val F1 16
+LDD 10000000mmmmmmmm 128 Val F1 16
+LDI 10001001kkkkkkkk 137 Val F1 16
+OR 01110100mmmmmmmm 116 Val F1 16
+OR 01110101oooooooo 117 SymX, Val F1 16
+OR 01110110oooooooo 118 SymS, Val F1 16
+ORI 01110111kkkkkkkk 119 Val F1 16
+OUT 10110000pppppppp 176 Val F1 16
+SBB 00011000mmmmmmmm 24 Val F1 16
+SBB 00011001oooooooo 25 SymX, Val F1 16
+SBB 00011001oooooooo 25 SymS, Val F1 16
+SBBI 00011011kkkkkkkk 27 Val F1 16
+ST 10100010oooooooo 162 Sym+S+ Val F1 16
+ST 10100110oooooooo 166 Sym+X+ Val F1 16
+ST 10101010oooooooo 170 Sym-S+ Val F1 16
+ST 10101110oooooooo 174 Sym-X+ Val F1 16
+ST 10110010oooooooo 178 SymS++ Val F1 16
+ST 10110011oooooooo 179 SymS+ Val F1 16
+ST 10110110oooooooo 182 SymX++ Val F1 16
+ST 10110111oooooooo 183 SymX+ Val F1 16
+ST 10111010oooooooo 186 SymS-+ Val F1 16
+ST 10111110oooooooo 190 SymX-+ Val F1 16
+STD 10100000mmmmmmmm 160 Val F1 16
+SUB 00010000mmmmmmmm 16 Val F1 16
+SUB 00010001oooooooo 17 Val F1 16
+SUB 00010010oooooooo 18 Val F1 16
+SUBI 00010011kkkkkkkk 19 Val F1 16
+TST 01001100mmmmmmmm 76 Val F1 16
+TST 01001101oooooooo 77 SymX, Val F1 16
+TST 01001110oooooooo 78 SymS, Val F1 16
+TSTI 01001111kkkkkkkk 79 Val F1 16
+XOR 00110100mmmmmmmm 52 Val F1 16
+XOR 00110101oooooooo 53 SymX, Val F1 16
+XOR 00110110oooooooo 54 SymS, Val F1 16
+XORI 00110111kkkkkkkk 55 Val F1 16
+ASR 0111000100000001 28929 F2 16
+CLC 0000011111100100 2020 F2 16
+CLI 0000011101101001 1865 F2 16
+CLU 0000011111001010 4010 F2 16
+DEC 0111101100000000 31488 F2 16
+DES 0000111001000000 928 F2 16
+DEX 0000110110000000 864 F2 16
+INC 0000000000000000 0 F2 16
+INS 0000011001000000 416 F2 16
+INX 0000010110000000 352 F2 16
+LSL 0101100000000000 22528 F2 16
+LSR 0111000100000000 28928 F2 16
+NEG 0010011100000000 9984 F2 16
+NOP 0001111110000000 4080 F2 16
+NOT 0010110100000000 11520 F2 16
+POPF 0000001000000000 256 F2 16
+PUSHF 0000111000000000 1792 F2 16
+RLC 0101000000000000 80 F2 16
+ROL 0101001000000000 82 F2 16
+ROR 0111000100000010 28930 F2 16
+RRC 0111000100000011 28931 F2 16
+RTS 0001111100000000 4080 F2 16
+STC 0111111100001100 32332 F2 16
+STI 0111111110000001 32513 F2 16
+STU 0111111100100010 32354 F2 16
+TAS 0000011101010000 464 F2 16
+TAX 0000011110000000 192 F2 16
+TSA 0110011100000000 25344 F2 16
+TXA 0110011100000001 25345 F2 16
+CALL 111aaaaaaaaaaaaa 1048585 F3 16
+JMP 110aaaaaaaaaaaaa 6 Val F3 16
