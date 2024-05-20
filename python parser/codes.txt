@@ -1,0 +1,5 @@
+0000 0010 dddd rrrr
+0000 0011 0ddd 0rrr
+0000 0011 0ddd 1rrr
+0000 0011 1ddd 0rrr
+0000 0011 1ddd 1rrr
