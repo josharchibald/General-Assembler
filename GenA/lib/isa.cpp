@@ -159,6 +159,11 @@ asm_line isa::parse_asm(std::string line, std::string file_path) {
     size_t cutoff;
 
     text = line;
+    // If the asm line is empty return an invalid line.
+    if (line.empty()) {
+        return asm_line(ASM_INVALID, ASM_INVALID, ASM_INVALID, ASM_INVALID, \
+                        ASM_INVALID);
+    }
     asm_file_path = file_path;
     // Go through each line elements.
     for (size_t i = 0; i < NUM_STYLE_EL; i++) {

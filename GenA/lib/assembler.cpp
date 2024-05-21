@@ -96,9 +96,9 @@ void assembler::first_pass(void) {
                             // Update the symbol table if there is a label.
                             symbol_table_.insert({assembly_line.label(), pc_});
                         }
-                        // Update the program counter with the previous line 
-                        // size.
-                        pc_ += assembly_line.size(cpu_isa_);
+                            // Update the program counter with the previous line 
+                            // size.
+                            pc_ += assembly_line.size(cpu_isa_);
                     } 
                     else {
                         std::cerr << "Error: Invalid line of assembly on " << \
