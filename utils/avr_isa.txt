@@ -1,3 +1,7 @@
+/home/joshua/General-Assembler/utils/avr_isa_functions.cpp
+8
+256
+label: op_name operand;
 CLR 9 Val parse_alu_1 16
 LSL 3 Val parse_alu_1 16
 ROL 7 Val parse_alu_1 16

@@ -1,6 +1,11 @@
-ADC 96 Val F1 16
-ADC 97 SymX, Val F1 16
-ADC 98 SymS, Val F1 16
+; Steven Lei Caltech 10 ISA 
+/home/joshua/General-Assembler/utils/caltech10_isa_functions.cpp
+8
+256
+label: op_name operand;
+ADC 96 Val  
+ADC 45 SymX, Val F1 16
+ADC 98 SymS, Val  
 ADCI 99 Val F1 16
 ADD 104 Val F1 16
 ADD 105 SymX, Val F1 16

@@ -10,17 +10,19 @@
 
 #ifndef ASM_LINE_HPP
 #define ASM_LINE_HPP
+
+// Constants.
+const std::string ASM_INVALID = "";
+
 class isa;
 
 class asm_line {
 	// Publicly usable.
 	public:
 		// Constructor.
-		// Takes in a line of assembly, as a string, and an isa object and 
-		// parses the line updating all data. If the isa object or the line is
-		// invalid, NULL will be returned and an error message will be
-		// displayed.
-		asm_line(std::string line, isa cpu_isa);
+        // Takes in and updates all data members.
+		asm_line(std::string origin_file_path, std::string text, \
+                 std::string label, std::string op_name, std::string operand);
 		
 		// Destructor.
 		~asm_line();
@@ -31,8 +33,12 @@ class asm_line {
 		// line of assembly as an int. If either argument is invalid, and/or 
 		// this asm_line object cannot be assembled using the given arguments,
 		// NULL is returned and an error message is displayed.
-		size_t assemble(isa cpu_isa, \
-			            std::unordered_map<std::string, size_t> symbol_table);
+		// size_t assemble(isa cpu_isa, 
+		// 	            std::unordered_map<std::string, size_t> symbol_table);
+
+        // This function takes in the isa of a cpu and returns the size in bits
+        // of this line of assembly.
+        size_t size(isa cpu_isa);
 		
 		// Accessors
 		// All directly from data members.
@@ -44,8 +50,8 @@ class asm_line {
 	// Private usage only.
 	private:
 		// Private data members.
-		// The name of the file the assembly line is from.
-		std::string origin_file_name_;
+		// The path of the file the assembly line is from.
+		std::string origin_file_path_;
 		// The assembly line as text.
 		std::string text_;
 		// The label in the assembly line.

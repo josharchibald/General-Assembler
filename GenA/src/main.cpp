@@ -2,14 +2,16 @@
 // Revision History:
 // 05/06/24 Joshua Archibald Initial Revision.
 // 05/07/24 Joshua Archibald Finished command line argument parsing.
+// 05/18/24 Joshua Archibald Added ISA object creation.
 
 // Used libraries.
 #include <cstring>
 #include <iostream>
 #include <string>
-#include <cstdlib> // For system()
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
+#include "assembler.hpp"
 
 // Used constants.
 const char* FILE_FLAG = "-f";
@@ -25,7 +27,7 @@ const char* LIST_FLAG = "-l";
 // Displays a usage error message and exits the program with non zero exit
 // code.
 void usageError(char *prog) {
-	std::cerr << "\n\tUsage: " << prog << "-f <main file path> " \
+	std::cerr << "\n\tUsage: " << prog << " -f <main file path> " \
 	  								  "-i <isa file path> " \
 									  "-o <output folder path> " \
 									  "-l -h -v" \
@@ -134,10 +136,18 @@ int main(int argc, char* argv[]) {
 
 	}
 	
-
+    // TODO: Remove from debugging.
 	std::cout << "ISA path: " << isa_file_path << std::endl \
 			  << "Main path: " << main_file_path << std::endl \
-			  << "List: " << list << std::endl;		
+              << "Output path: " << output_folder_path << std::endl \
+			  << "List: " << list << std::endl;	
+
+    assembler gena(main_file_path, isa_file_path, output_folder_path, list);
+    
+    std::cout << "ISA Done." << std::endl;
+
+    gena.first_pass();
+
 	return 0;
 }
 
