@@ -19,8 +19,13 @@ asm_line::~asm_line() {}
 
 // Public functions.
 size_t asm_line::size(isa cpu_isa) {
-    code_macro macro = cpu_isa.code_mac(op_name_, operand_);
-    return cpu_isa.code_mac(op_name_, operand_).num_inst_bits();
+    if (!operand_.empty()){
+        code_macro macro = cpu_isa.code_mac(op_name_, operand_);
+        return cpu_isa.code_mac(op_name_, operand_).num_inst_bits();
+    }
+    else {
+        return 0;
+    }
 }
 
 
