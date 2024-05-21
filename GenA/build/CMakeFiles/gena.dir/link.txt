@@ -1,1 +1,0 @@
-/usr/bin/c++  -Wall -Wextra -Werror -Wno-long-long -Wno-variadic-macros -fexceptions -g -DNDEBUG -O3 -DNDEBUG CMakeFiles/gena.dir/lib/assembler.cpp.o CMakeFiles/gena.dir/lib/code_macro.cpp.o CMakeFiles/gena.dir/lib/isa.cpp.o CMakeFiles/gena.dir/src/main.cpp.o -o gena 

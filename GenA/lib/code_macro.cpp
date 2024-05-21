@@ -1,5 +1,5 @@
 // code_macro.cpp
-// C++ file for code macro class implementation.
+// C++ file for the code macro class implementation.
 // Revision History:
 // 05/18/24 Joshua Archibald Initial revision.
 
@@ -24,6 +24,18 @@ code_macro::code_macro(size_t op_code, \
 code_macro::~code_macro() {};
 
 // Public functions.
-// size_t translate(std::string op_name, std::string operand){}
+// Accessors 
+size_t code_macro::op_code(void) {
+    return op_code_;
+}
+std::vector<std::string> code_macro::operand_template(void) {
+    return operand_template_;
+}
+code_macro::func_ptr code_macro::func(void) {
+    return func_;
+}
+size_t code_macro::num_inst_bits(void) {
+    return num_inst_bits_;
+}
 
 // Helper functions.

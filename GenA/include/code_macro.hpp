@@ -24,11 +24,12 @@ class code_macro {
 		~code_macro();
 
 		// Public Methods
-		// This function takes in an operand string and returns its 
-		// corresponding program data as an int. If an invalid operand is
-		// passed in, this function will return NULL and display an error
-		// message.
-		size_t prog_data(std::string operand);
+        // Accessors 
+		size_t op_code(void);
+		std::vector<std::string> operand_template(void);
+		func_ptr func(void);
+        size_t num_inst_bits(void);
+
 
 	// Private usage only.
 	private:

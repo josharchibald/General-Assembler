@@ -139,11 +139,14 @@ int main(int argc, char* argv[]) {
     // TODO: Remove from debugging.
 	std::cout << "ISA path: " << isa_file_path << std::endl \
 			  << "Main path: " << main_file_path << std::endl \
+              << "Output path: " << output_folder_path << std::endl \
 			  << "List: " << list << std::endl;	
 
-    assembler gena(main_file_path, isa_file_path);
+    assembler gena(main_file_path, isa_file_path, output_folder_path, list);
     
     std::cout << "ISA Done." << std::endl;
+
+    gena.first_pass();
 
 	return 0;
 }
