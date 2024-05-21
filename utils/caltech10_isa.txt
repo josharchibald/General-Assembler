@@ -3,9 +3,9 @@
 8
 256
 label: op_name operand;
-ADC 96 Val   16
-ADC 45 SymX, Val f1 16
-ADC 98 SymS, Val  16
+ADC 96 Val f1 16
+ADC 97 SymX, Val f1 16
+ADC 98 SymS, Val f1 16
 ADCI 99 Val f1 16
 ADD 104 Val f1 16
 ADD 105 SymX, Val f1 16
@@ -70,8 +70,8 @@ OR 117 SymX, Val f1 16
 OR 118 SymS, Val f1 16
 ORI 119 Val f1 16
 OUT 48128 Val f1 16
-POPf 256 f2 16
-PUSHf 1792 f2 16
+POPF 256 f2 16
+PUSHF 1792 f2 16
 RLC 80 f2 16
 ROL 82 f2 16
 ROR 28930 f2 16

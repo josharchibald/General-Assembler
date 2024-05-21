@@ -2,7 +2,8 @@
 // C++ file for the isa class implementation.
 // Revision History:
 // 05/18/24 Joshua Archibald Initial revision.
-// 05/19/24 Joshua Archibald Implemented parse asm.
+// 05/19/24 Joshua Archibald Implemented parse_asm.
+// 05/20/24 Joshua Archibald Implemented code_mac.
 
 // Included libraries.
 #include "isa.hpp"
@@ -117,7 +118,7 @@ isa::isa(std::string isa_file_path) {
         }
         // Display error message and exit if style is not valid.
         else {
-            std::cerr << "Error: Invalid line 4 in ISA file: " << \
+            std::cerr << "Error: Invalid style line in ISA file: " << \
                           isa_file_path << std::endl; 
             exit(EXIT_FAILURE);
 	    }
@@ -216,6 +217,18 @@ code_macro isa::code_mac(std::string op_name, std::string operand) {
     return code_macro(ISA_INVALID, std::vector<std::string>(), NULL, \
                       ISA_INVALID);
 }
+
+// Accessors	
+std::vector<size_t> isa::word_sizes(void) {
+    return word_sizes_;
+}
+std::vector<size_t> isa::mem_sizes(void) {
+    return mem_sizes_;
+}
+size_t isa::harv_not_princ(void) {
+    return harv_not_princ_;
+}
+		
 
 // Helper functions.
 bool isa::op_match(std::vector<std::string> op_temp, std::string& op) {
@@ -495,6 +508,9 @@ void isa::parse_isa_code_macro(std::vector<std::string> isa_line_data, \
               isa_line_data.at(len - FUNC_REV_IDX));
     
     if (func == NULL) {
+        std::cerr << "Error: Invalid function " << \
+        isa_line_data.at(len - FUNC_REV_IDX) << " at line " << line_num << \
+        " of ISA file: " << isa_file_path << std::endl;
         make = false;
     }
 
@@ -525,7 +541,6 @@ void* isa::load_function(const std::string& lib_name, \
                          const std::string& func_name) {
     void* handle = dlopen(lib_name.c_str(), RTLD_LAZY);
     if (!handle) {
-        std::cerr << "Error: Cannot open library: " << dlerror() << std::endl;
         return NULL;
     }
 
@@ -534,7 +549,6 @@ void* isa::load_function(const std::string& lib_name, \
 
     const char* dlsym_error = dlerror();
     if (dlsym_error) {
-        std::cerr << "Error: Cannot load symbol: " << dlsym_error << std::endl;
         dlclose(handle);
         return NULL;
     }

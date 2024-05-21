@@ -57,10 +57,11 @@ class assembler {
         // Helper functions
         // This function takes in a line with a pseudo operation as a string, a 
         // file bool to modify and a file name file pair list to modify and 
-        // updates the data members and some args depending on the lines pseudo
-        // operation. 
+        // a line number and updates the data members and some args depending on 
+        // the lines pseudo operation. 
         void pseudo_op_handler(std::string line, bool& next_file, \
-             std::list<std::pair<std::string, std::ifstream>>& asm_file_stack);
+             std::list<std::pair<std::string, std::ifstream>>& asm_file_stack, \
+             size_t line_num);
         // This function takes in the list of file name file pairs and and file
         // name and returns whether the file name is in the list or not.
         bool file_in_list(const \

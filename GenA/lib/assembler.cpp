@@ -2,7 +2,9 @@
 // C++ file for the assembler class implementation.
 // Revision History:
 // 05/18/24 Joshua Archibald Initial revision.
-// 05/19/24 Joshua Archibald First pass implemented.
+// 05/19/24 Joshua Archibald Implemented first_pass.
+// 05/20/24 Joshua Archibald Debugged first_pass.
+// 05/20/24 Joshua Archibald Pseudo operations implemented.
 
 
 // Included libraries.
@@ -21,6 +23,14 @@
 // Constants.
 const std::string PSEUDO_OP = ".";
 const std::string CONTINUE = "\\";
+const std::string CODE_LOC = "org";
+const size_t CODE_LOC_SIZE = 2;
+const std::string VAR_DEC = "data";
+const size_t VAR_DEC_SIZE = 3;
+const std::string CONST = "def";
+const size_t CONST_SIZE = 2;
+const std::string INCLUDE = "include";
+const size_t INCLUDE_SIZE = 2;
 
 // Constructor.
 
@@ -83,7 +93,8 @@ void assembler::first_pass(void) {
                 // If the line is a pseudo operation, pass it to the handler, 
                 // which can modify the file and line search.
                 if ((line.find(PSEUDO_OP) == 0)) {
-                    pseudo_op_handler(line, next_file, asm_file_stack);
+                    pseudo_op_handler(line, next_file, asm_file_stack, \
+                                      line_num);
                 }
                 else {
                     // Make sure assembly line is valid before adding it to the 
@@ -91,14 +102,29 @@ void assembler::first_pass(void) {
                     asm_line assembly_line = cpu_isa_.parse_asm(line, \
                     asm_file_pair.first);  
                     if (assembly_line.origin_file() != ASM_INVALID) {
-                        asm_prog_.push_back(assembly_line);
+                        auto it = asm_prog_.begin();
+                        std::advance(it, pc_);
+                        asm_prog_.insert(it, assembly_line);
                         if (assembly_line.label() != "") {
-                            // Update the symbol table if there is a label.
-                            symbol_table_.insert({assembly_line.label(), pc_});
+                            // Update the symbol table if there is a label and
+                            // it is not the same name as any var or const.
+                            if (symbol_table_.count(assembly_line.label()) == \
+                                0) {
+                                symbol_table_.insert({assembly_line.label(), \
+                                                      pc_});
+                            }
+                            else  {
+                                std::cerr << "Error: Redefinition of  " << \
+                                assembly_line.label() << " on line " << \
+                                line_num << " in file " << asm_file_pair.first \
+                                << std::endl;
+                            }
                         }
+                        else {
                             // Update the program counter with the previous line 
                             // size.
                             pc_ += assembly_line.size(cpu_isa_);
+                        }
                     } 
                     else {
                         std::cerr << "Error: Invalid line of assembly on " << \
@@ -125,10 +151,103 @@ void assembler::first_pass(void) {
 // Helper functions.
 void assembler::pseudo_op_handler(std::string line, bool& next_file, \
                        std::list<std::pair<std::string, std::ifstream>>& \
-                       asm_file_stack) {
-    (void) line;
+                       asm_file_stack, size_t line_num) {
+    std::vector<std::string> line_data;
     (void) next_file;
-    (void) asm_file_stack;
+    line_data = cpu_isa_.split_by_spaces(line.substr(PSEUDO_OP.length()));
+    // Conditionals for pseudo operations as they are all very different.
+    // The number after the code location pseudo op gets set to the pc. 
+    if (line_data.at(0) == CODE_LOC) {
+        if (line_data.size() == CODE_LOC_SIZE) {
+            try {
+				std::stoul(line_data.at(CODE_LOC_SIZE - 1));
+            }
+            // Display error message if string is not a positive integer.
+            catch (const std::exception& e) {
+                std::cout << "Error: Invalid code location entry: " << \
+                line_data.at(CODE_LOC_SIZE) << " on line " << line_num << \
+                " in file: " << asm_file_stack.back().first << std::endl;
+                return;
+            }
+            pc_ = std::stoul(line_data.at(CODE_LOC_SIZE - 1));
+        }
+    }
+    else if (line_data.at(0) == VAR_DEC) {
+        std::string var_name;
+        size_t *memory = &pc_;
+        size_t bit_num = cpu_isa_.word_sizes().front();
+        // The string after the variable declaration pseudo operation is put
+        // into the symbol table with the data used pointer if harvard but with 
+        // the pc if prenotion then the pointer is moved up by the number after 
+        // that multiplied by the word size.
+        if (line_data.size() == VAR_DEC_SIZE) {
+            try {
+				std::stoul(line_data.at(VAR_DEC_SIZE - 1));
+                var_name = line_data.at(VAR_DEC_SIZE - 2);
+            }
+            // Display error message if string is not a positive integer.
+            catch (const std::exception& e) {
+                std::cout << "Error: Invalid variable word count entry: " << \
+                line_data.at(VAR_DEC_SIZE) << " on line " << line_num << \
+                " in file: " << asm_file_stack.back().first << std::endl;
+                return;
+            }
+            if (cpu_isa_.harv_not_princ()) {
+                memory = &data_used_;
+                bit_num = cpu_isa_.word_sizes().back();
+            }
+            // If the var name already exists as a variable or label display an
+            // error.
+            if (symbol_table_.count(var_name) == \
+                0) {
+                symbol_table_.insert({var_name, \
+                                    *memory});
+            }
+            else  {
+                std::cerr << "Error: Redefinition of " << var_name << \
+                " on line " << line_num << " in file " << \
+                asm_file_stack.back().first << std::endl;
+            }           
+            // The updated memory space pointer is updated.
+            *memory = *memory + \
+                      (bit_num * std::stoul(line_data.at(VAR_DEC_SIZE - 1)));
+        }
+    }
+    else if (line_data.at(0) == CONST) {
+        std::string const_name;
+        // The string after the constant declaration pseudo operation is put
+        // into the symbol table with its value.
+        if (line_data.size() == CONST_SIZE) {
+            try {
+				std::stoul(line_data.at(CONST_SIZE - 1));
+                const_name = std::stoul(line_data.at(CONST_SIZE - 2));
+            }
+            // Display error message if string is not a positive integer.
+            catch (const std::exception& e) {
+                std::cout << "Error: Invalid constant definition entry: " << \
+                line_data.at(CONST_SIZE) << " on line " << line_num << \
+                " in file: " << asm_file_stack.back().first << std::endl;
+                return;
+            }
+            // If the const name already exists as a variable or label or const
+            // display an error.
+            if (symbol_table_.count(const_name) == \
+                0) {
+                symbol_table_.insert({const_name, \
+                                   std::stoul(line_data.at(CONST_SIZE - 1))});
+            }
+            else  {
+                std::cerr << "Error: Redefinition of " << const_name << \
+                " on line " << line_num << " in file " << \
+                asm_file_stack.back().first << std::endl;
+            }           
+        }
+    }
+    else if (line_data.at(0) == INCLUDE) {
+        if (line_data.size() == INCLUDE_SIZE) {
+            std::cout << "Test";
+        }
+    }
 }
 
 bool assembler::file_in_list(const \

@@ -43,6 +43,16 @@ class isa {
         // operand or operation name is passed in, this function will return an
         // invalid code macro and display an error message.
 		code_macro code_mac(std::string op_name, std::string operand);
+
+		// This function takes in a string and returns a vector that is the 
+		// strings separated by spaces. Technically a helper function but 
+        // useful for other objects.
+		std::vector<std::string> split_by_spaces(const std::string& str);
+
+        // Accessors	
+		std::vector<size_t> word_sizes();
+		std::vector<size_t> mem_sizes();
+		size_t harv_not_princ();
 		
 	// Private usage only.
 	private:
@@ -61,9 +71,6 @@ class isa {
 		std::unordered_multimap<std::string, code_macro> code_map_;
 
 		// Helper functions.
-		// This function takes in a string and returns a vector that is the 
-		// strings separated by spaces.  
-		std::vector<std::string> split_by_spaces(const std::string& str);
 
         // This file takes in a path to a file and compiles it to a shared 
         // library. If The file can not be compiled an error message is 
@@ -87,7 +94,7 @@ class isa {
 		void parse_isa_code_macro(std::vector<std::string> isa_line_data, \
                                   std::string isa_file_path, size_t line_num);
 
-        // This function takes i the name of a dynamically linked library and 
+        // This function takes in the name of a dynamically linked library and 
         //  function name, both as strings and returns the function pointer to
         // the function.
         void* load_function(const std::string& lib_name, \
