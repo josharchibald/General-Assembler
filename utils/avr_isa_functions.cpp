@@ -128,21 +128,23 @@ size_t parse_full_length(size_t opcode){
 }
 
 // Branch instructions except BRBC/BRBS, format is #### ##kk kkkk k###
-size_t parse_branch(size_t opcode, std::string label){
-    size_t label_toi = parse_value(label);
+size_t parse_branch(size_t opcode, std::string label, size_t program_counter){
+    size_t label_toi = parse_value(label) & 0b1111111;
+    size_t offset = label_toi - program_counter;
     size_t opcode_bit_length = 9;
     size_t opcode_first_6_shifted = (opcode >> (opcode_bit_length - 6)) << OPCODE_DEFAULT_LENGTH - 6;
     size_t opcode_last_3 = opcode & 0b111;
-    size_t label_first_6_shifted = (label_toi & 0b111111) << 3;
-    return opcode_first_6_shifted | label_first_6_shifted | opcode_last_3;
+    size_t offset_first_7_shifted = (offset & 0b1111111) << 3;
+    return opcode_first_6_shifted | offset_first_7_shifted | opcode_last_3;
 }
 // Branch instructions for BRBC/BRBS
-size_t parse_branch_with_bit(size_t opcode, std::string label, std::string sreg_bit){
-    size_t label_toi = parse_value(label);
+size_t parse_branch_with_bit(size_t opcode, std::string label, std::string sreg_bit, size_t program_counter){
+    size_t label_toi = parse_value(label) & 0b1111111;
+    size_t offset = label_toi - program_counter;
     size_t sreg_bit_toi = parse_value(label) & 0b111;
     size_t opcode_shifted = opcode << OPCODE_DEFAULT_LENGTH - 6;
-    size_t label_shifted = (label_toi & 0b111111) << 3;
-    return opcode_shifted | label_shifted | sreg_bit_toi;
+    size_t offset_shifted = (label_toi & 0b1111111) << 3;
+    return opcode_shifted | offset_shifted | sreg_bit_toi;
 }
 
 // Some ALU and LD/ST instructions. Format is #### ###d dddd ####
@@ -318,11 +320,11 @@ size_t parse_mov_word(size_t opcode, std::string reg_d, std::string reg_r){
     return opcode_shifted | reg_d_shifted | reg_r_toi;
 }
 // Relative jump and call
-size_t parse_rcall_rjmp(size_t opcode, std::string label, const size_t pc){
+size_t parse_rcall_rjmp(size_t opcode, std::string label, const size_t program_counter){
     size_t opcode_length = 4;
     size_t opcode_shifted = opcode << (OPCODE_DEFAULT_LENGTH - opcode_length);
-    size_t label_toi = parse_value(label);
-    size_t offset = label_toi - pc;
+    size_t label_toi = parse_value(label) & 0xFFF;
+    size_t offset = (label_toi - program_counter) & 0xFFF;
     return opcode_shifted | offset;
 }
 // Format #### ###k kkkk ###k kkkk kkkk kkkk kkkk
@@ -366,10 +368,9 @@ int main() {
     print_binary_with_spaces_32(parse_load_store_32(1168, "9392239", "r93"));
     print_binary_with_spaces(parse_modify_flags(4760, "300"));
     print_binary_with_spaces(parse_modify_flags(4744, "300"));
-    print_binary_with_spaces(parse_branch(483, "939"));
-    print_binary_with_spaces(parse_branch(494, "939"));
-    print_binary_with_spaces(parse_branch_with_bit(61, "939", "11"));
-    print_binary_with_spaces(parse_branch_with_bit(60, "939", "11"));
-
+    print_binary_with_spaces(parse_branch(483, "939", 1));
+    print_binary_with_spaces(parse_branch(494, "939", 1));
+    print_binary_with_spaces(parse_branch_with_bit(61, "939", "11", 1));
+    print_binary_with_spaces(parse_branch_with_bit(60, "939", "11", 1));
     return 0;
 }
