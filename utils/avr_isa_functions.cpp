@@ -6,17 +6,27 @@
 #include <fstream>
 #include <bitset>
 
-#define XL 26
-#define XH 27
-#define YL 28
-#define YH 29
-#define ZL 30
-#define ZH 31
+// Define Register Symbols used in AVR.
 
-const size_t OPCODE_DEFAULT_LENGTH = 16;
-const size_t OPCODE_EXTRA_LENGTH = 32;
+const size_t XL = 26;
+const size_t XH = 27;
+const size_t YL = 28;
+const size_t YH = 29;
+const size_t ZL = 30;
+const size_t ZH = 31;
 
-size_t operator_parser(std::string val){
+const size_t OPCODE_DEFAULT_LENGTH = 16; // Default instruction length is 16 bit
+const size_t OPCODE_EXTRA_LENGTH = 32;      // But a few instructions are 32
+
+
+/**
+ * Converts the string representation of a register or value to its decimal 
+ * equivalent. For example R16 would return 16.
+ * 
+ * @param val the value to parse
+ * @return the decimal representation of the value.
+*/
+size_t parse_operator(std::string val){
     if (val.empty()) {
         return 0;
     }
@@ -25,6 +35,7 @@ size_t operator_parser(std::string val){
     char first_char = val[0];
     switch (first_char)
     {
+    // Handle register parsing
     case 'R':
         return std::stoi(val.substr(1));
     case 'X':
@@ -46,7 +57,7 @@ size_t operator_parser(std::string val){
             return ZH;
         }    
     default:
-        // assume it is a constant 
+        // Else assume the value is a literal decimal
         return std::stoi(val);
     }
 }
@@ -65,8 +76,8 @@ void print_binary_with_spaces(uint16_t number) {
 // general format is #### KKKK dddd KKKK
 size_t parse_alu_imm(size_t opcode, std::string reg, std::string immediate){
     size_t immediate_toi = 0;
-    immediate_toi = operator_parser(immediate);
-    size_t reg_toi = operator_parser(reg);
+    immediate_toi = parse_operator(immediate);
+    size_t reg_toi = parse_operator(reg);
     size_t data = 0;
     size_t opcode_bit_length = 4;
     size_t opcode_shifted = (opcode) << (OPCODE_DEFAULT_LENGTH - opcode_bit_length);
@@ -76,49 +87,17 @@ size_t parse_alu_imm(size_t opcode, std::string reg, std::string immediate){
     data = opcode_shifted | immediate_first_byte | reg_last_4_bits | immediate_last_byte;
     return data;
 }
-// 5 bit instru. I/O format is #### #AAd dddd AAAA. STS is #### #kkk dddd kkkk
-size_t f2(size_t opcode, std::string val1, std::string val2){
-    size_t val1_toi = operator_parser(val1);
-    size_t val2_toi = operator_parser(val2);
-    size_t opcode_bit_length = 5;
-    size_t opcode_shifted = (opcode) << (OPCODE_DEFAULT_LENGTH - opcode_bit_length);
-    switch (opcode)
-    {
-    // STS
-    case 21:
-        size_t dest_reg = (val1_toi) << 4;
-        size_t imm_first_3_bits = (val2_toi >> 7) << 8;
-        size_t imm_last_4_bits = (val2_toi & 0b1111);
-        return opcode_shifted | imm_first_3_bits | dest_reg | imm_last_4_bits;
-    // IN
-    case 22:
-    {
-        size_t dest_reg = (val1_toi ) << 4;
-        size_t port_last_4_bits = val2_toi & 0b1111;
-        size_t port_first_2_bits = (val2_toi >> 6) << 9;
-        return opcode_shifted | port_first_2_bits | dest_reg | port_last_4_bits;
-    }    
-    // OUT
-    case 23: 
-    {
-        size_t source_reg = (val2_toi ) << 4;
-        size_t port_last_4_bits = val1_toi & 0b1111;
-        size_t port_first_2_bits = (val1_toi >> 6) << 9;
-        return opcode_shifted | port_first_2_bits | source_reg | port_last_4_bits;       
-    }
-    }
-}
 // Some ALU ops with 1 bit.
 size_t parse_alu_1(size_t opcode, std::string reg_d){
-    size_t reg_d_toi = operator_parser(reg_d) & 0b111111;
+    size_t reg_d_toi = parse_operator(reg_d) & 0b111111;
     size_t opcode_bit_length = 6;
     size_t opcode_shifted = opcode << (OPCODE_DEFAULT_LENGTH - opcode_bit_length);
     return opcode_shifted | reg_d_toi;
 }
 // Some ALU operations with 2 inputs, format is #### ##rd dddd rrrr
 size_t parse_alu_2(size_t opcode, std::string reg_d, std::string reg_r){
-    size_t reg_d_toi = operator_parser(reg_d);
-    size_t reg_r_toi  = operator_parser(reg_r);
+    size_t reg_d_toi = parse_operator(reg_d);
+    size_t reg_r_toi  = parse_operator(reg_r);
     size_t opcode_bit_length = 6;
     size_t opcode_shifted = opcode << (OPCODE_DEFAULT_LENGTH - opcode_bit_length);
     size_t reg_r_first_bit_shifted = (reg_r_toi >> 4) << 9;
@@ -136,7 +115,7 @@ size_t parse_full_length(size_t opcode){
 
 // Branch instructions except BRBC/BRBS, format is #### ##kk kkkk k###
 size_t parse_branch(size_t opcode, std::string label){
-    size_t label_toi = operator_parser(label);
+    size_t label_toi = parse_operator(label);
     size_t opcode_bit_length = 9;
     size_t opcode_first_6_shifted = (opcode >> (opcode_bit_length - 6)) << OPCODE_DEFAULT_LENGTH - 6;
     size_t opcode_last_3 = opcode & 0b111;
@@ -145,8 +124,8 @@ size_t parse_branch(size_t opcode, std::string label){
 }
 // Branch instructions for BRBC/BRBS
 size_t parse_branch_with_bit(size_t opcode, std::string label, std::string sreg_bit){
-    size_t label_toi = operator_parser(label);
-    size_t sreg_bit_toi = operator_parser(label);
+    size_t label_toi = parse_operator(label);
+    size_t sreg_bit_toi = parse_operator(label);
     size_t opcode_bit_length = 9;
     size_t opcode_shifted = (opcode >> (opcode_bit_length - 3)) << OPCODE_DEFAULT_LENGTH - 6;
     size_t label_first_6_shifted = (label_toi & 0b111111) << 3;
@@ -155,7 +134,7 @@ size_t parse_branch_with_bit(size_t opcode, std::string label, std::string sreg_
 
 // Some ALU and LD/ST instructions. Format is #### ###d dddd ####
 size_t parse_ld_st_stck_alu(size_t opcode, std::string reg){
-    size_t reg_toi = operator_parser(reg);
+    size_t reg_toi = parse_operator(reg);
     size_t opcode_bit_length = 11;
     size_t opcode_first7_shifted = (opcode >> (opcode_bit_length - 4)) 
                                     << (OPCODE_DEFAULT_LENGTH - 7);
@@ -166,8 +145,8 @@ size_t parse_ld_st_stck_alu(size_t opcode, std::string reg){
 // Most multiplication. Format is #### #### #ddd #rrr except MULS
 // Default ocode format is #### #### dddd ####  
 size_t parse_mul(size_t opcode, std::string reg_d, std::string reg_r){
-    size_t reg_d_toi = operator_parser(reg_d);
-    size_t reg_r_toi  = operator_parser(reg_r);
+    size_t reg_d_toi = parse_operator(reg_d);
+    size_t reg_r_toi  = parse_operator(reg_r);
     switch (opcode)
     {
     // MULS is 12 bit long instruction and different format
@@ -198,12 +177,12 @@ size_t parse_io(size_t opcode, std::string op1, std::string op2){
     size_t reg_toi;
     size_t port_toi;
     if (opcode == 22) {
-        reg_toi = operator_parser(op1) & 0b11111;
-        port_toi = operator_parser(op2) & 0b11111;
+        reg_toi = parse_operator(op1) & 0b11111;
+        port_toi = parse_operator(op2) & 0b11111;
     // OUT format is OUT PORT, R
     } else  {
-        reg_toi = operator_parser(op2) & 0b11111;
-        port_toi = operator_parser(op1) & 0b11111;
+        reg_toi = parse_operator(op2) & 0b11111;
+        port_toi = parse_operator(op1) & 0b11111;
     }
     size_t opcode_bit_length = 5;
     size_t opcode_shifted = opcode << (OPCODE_DEFAULT_LENGTH - opcode_bit_length);
@@ -214,7 +193,7 @@ size_t parse_io(size_t opcode, std::string op1, std::string op2){
 }
 // DES and SER instruction
 size_t parse_des(size_t opcode, std::string val){
-    size_t val_toi = operator_parser(val) & 0b1111;
+    size_t val_toi = parse_operator(val) & 0b1111;
     size_t val_shifted = val_toi >> 4;
     size_t opcode_first_8_shifted = opcode << (OPCODE_DEFAULT_LENGTH - 8);
     size_t opcode_last_4 = opcode & 0b1111;
@@ -223,7 +202,7 @@ size_t parse_des(size_t opcode, std::string val){
 
 //BCLR/BSET
 size_t parse_modify_flags(size_t opcode, std::string flag_bit){
-    size_t flag_bit_toi = operator_parser(flag_bit) & 0b1111;
+    size_t flag_bit_toi = parse_operator(flag_bit) & 0b1111;
     size_t flag_bit_shifted = flag_bit_toi >> 4;
     size_t opcode_first_9_shifted = opcode >> (OPCODE_DEFAULT_LENGTH - 9);
     size_t opcode_last_4 = opcode & 0b1111;
@@ -231,8 +210,8 @@ size_t parse_modify_flags(size_t opcode, std::string flag_bit){
 }
 //SBRC/SBRS and BLD/BST
 size_t parse_bit_check_load_store(size_t opcode, std::string val, std::string bit){
-    size_t val_toi = operator_parser(val) & 0b1111;
-    size_t bit_toi = operator_parser(bit) & 0b111;
+    size_t val_toi = parse_operator(val) & 0b1111;
+    size_t bit_toi = parse_operator(bit) & 0b111;
     size_t opcode_first_7_shifted = opcode << (OPCODE_DEFAULT_LENGTH - 7);
     size_t opcode_last_shifted = (opcode & 0b1) << 3;
     size_t val_shifted = val_toi << 8;
@@ -240,8 +219,8 @@ size_t parse_bit_check_load_store(size_t opcode, std::string val, std::string bi
 }
 // SBI
 size_t parse_clear_set_bit(size_t opcode, std::string io_reg, std::string bit){
-    size_t io_reg_toi = operator_parser(io_reg) & 0b11111;
-    size_t bit_toi = operator_parser(bit) & 0b111;
+    size_t io_reg_toi = parse_operator(io_reg) & 0b11111;
+    size_t bit_toi = parse_operator(bit) & 0b111;
     size_t opcode_length = 8;
     size_t opcode_shifted = opcode << (OPCODE_DEFAULT_LENGTH - opcode_length);
     size_t io_reg_shifted = io_reg_toi << 7;
@@ -255,12 +234,12 @@ size_t parse_load_store_32(size_t opcode, std::string val1, std::string val2){
     size_t data = 0;
     // LDS
     if (opcode == 1152) {
-        reg_toi = operator_parser(val1) & 0b11111;
-        imm_toi = operator_parser(val2);
+        reg_toi = parse_operator(val1) & 0b11111;
+        imm_toi = parse_operator(val2);
     // STS
     } else {
-        reg_toi = operator_parser(val2) & 0b11111;
-        imm_toi = operator_parser(val1);
+        reg_toi = parse_operator(val2) & 0b11111;
+        imm_toi = parse_operator(val1);
     }
     size_t opcode_first_7_shifted = opcode >> (OPCODE_EXTRA_LENGTH - 7);
     size_t opcode_last_4_shifted = (opcode | 0b1111) >> (OPCODE_DEFAULT_LENGTH);
@@ -275,12 +254,12 @@ size_t parse_load_store_16(size_t opcode, std::string val1, std::string val2){
     size_t data = 0;
     //store
     if (opcode == 21 || opcode > 9) {
-        reg_toi = operator_parser(val2) & 0b1111;
-        imm_toi = operator_parser(val1);
+        reg_toi = parse_operator(val2) & 0b1111;
+        imm_toi = parse_operator(val1);
     // load
     } else {
-        reg_toi = operator_parser(val1) & 0b1111;
-        imm_toi = operator_parser(val2);
+        reg_toi = parse_operator(val1) & 0b1111;
+        imm_toi = parse_operator(val2);
     }
     // STS/LDS
     if (opcode >= 20) {
@@ -308,8 +287,8 @@ size_t parse_load_store_16(size_t opcode, std::string val1, std::string val2){
 }
 // ADIW, SUBIW
 size_t parse_add_sub_word(size_t opcode, std::string reg, std::string word){
-    size_t reg_toi = operator_parser(reg);
-    size_t word_toi = operator_parser(word);
+    size_t reg_toi = parse_operator(reg);
+    size_t word_toi = parse_operator(word);
     size_t opcode_length = 8;
     size_t opcode_shifted = opcode << (OPCODE_DEFAULT_LENGTH - opcode_length);
     // special limitations on the register value
@@ -320,8 +299,8 @@ size_t parse_add_sub_word(size_t opcode, std::string reg, std::string word){
 }
 // MOVW
 size_t parse_mov_word(size_t opcode, std::string reg_d, std::string reg_r){
-    size_t reg_d_toi = operator_parser(reg_d) & 0b1111;
-    size_t reg_r_toi = operator_parser(reg_r) & 0b1111;
+    size_t reg_d_toi = parse_operator(reg_d) & 0b1111;
+    size_t reg_r_toi = parse_operator(reg_r) & 0b1111;
     size_t opcode_length = 8;
     size_t opcode_shifted = opcode << (OPCODE_DEFAULT_LENGTH - opcode_length);
     size_t reg_d_shifted = reg_d_toi << 4;
@@ -331,13 +310,13 @@ size_t parse_mov_word(size_t opcode, std::string reg_d, std::string reg_r){
 size_t parse_rcall_rjmp(size_t opcode, std::string label, const size_t pc){
     size_t opcode_length = 4;
     size_t opcode_shifted = opcode << (OPCODE_DEFAULT_LENGTH - opcode_length);
-    size_t label_toi = operator_parser(label);
+    size_t label_toi = parse_operator(label);
     size_t offset = label_toi - pc;
     return opcode_shifted | offset;
 }
 // Format #### ###k kkkk ###k kkkk kkkk kkkk kkkk
 size_t parse_call_jmp(size_t opcode, std::string label){
-    size_t label_toi = operator_parser(label);
+    size_t label_toi = parse_operator(label);
     size_t opcode_first_7 = (opcode >> 3) << (OPCODE_EXTRA_LENGTH - 7);
     size_t opcode_last_3 = opcode & 0b111;
     size_t label_first_5_shifted = (label_toi >> 17);

@@ -10,7 +10,7 @@ extern "C" {
 
     const size_t OP_CODE_FULL_SIZE = 16;
 
-    size_t operator_parser(std::string op){
+    size_t parse_operator(std::string op){
         if (op.empty()) {
             return 0;
         }
@@ -32,7 +32,7 @@ extern "C" {
     size_t f1(size_t op_code, std::string op1) {
         size_t data;
         size_t op_code_bit_count = 8;
-        size_t op1_toi = operator_parser(op1);
+        size_t op1_toi = parse_operator(op1);
         // shift the op_code such that the first op_code_bit_count bits are the code
         data = op_code << (OP_CODE_FULL_SIZE - op_code_bit_count);
         data = data | op1_toi;
@@ -48,7 +48,7 @@ extern "C" {
     size_t f3(size_t op_code, std::string op1){
         size_t data;
         size_t op_code_bit_count = 3;
-        size_t op1_toi = operator_parser(op1);
+        size_t op1_toi = parse_operator(op1);
         // shift the op_code such that the first op_code_bit_count bits are the code
         data = op_code << (OP_CODE_FULL_SIZE - op_code_bit_count);
         data = data | op1_toi;
