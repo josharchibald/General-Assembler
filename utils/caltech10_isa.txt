@@ -1,113 +1,117 @@
 ; Steven Lei Caltech 10 ISA 
-/home/joshua/General-Assembler/utils/caltech10_isa_functions.cpp
+/home/stevens/Documents/General-Assembler/utils/caltech10_isa_functions.cpp
 8
 256
 label: op_name operand;
-ADC 96 Val f1 16
-ADC 97 SymX, Val f1 16
-ADC 98 SymS, Val f1 16
-ADCI 99 Val f1 16
-ADD 104 Val f1 16
-ADD 105 SymX, Val f1 16
-ADD 106 SymS, Val f1 16
-ADDI 107 Val f1 16
-AND 68 Val f1 16
-AND 69 SymX, Val f1 16
-AND 70 SymS, Val f1 16
-ANDI 71 Val f1 16
-ASR 28929 f2 16
-CALL 1048585 f3 16
-CLC 2020 f2 16
-CLI 1865 f2 16
-CLU 4010 f2 16
-CMP 48 Val f1 16
-CMP 49 SymX, Val f1 16
-CMP 50 SymS, Val f1 16
-CMPI 51 Val f1 16
-DEC 31488 f2 16
-DES 928 f2 16
-DEX 864 f2 16
-IN 32896 Val f1 16
-INC 0 f2 16
-INS 416 f2 16
-INX 352 f2 16
-JA 136 Val f1 16
-JAE / JNC 140 Val f1 16
-JB / JC 143 Val f1 16
-JBE 139 Val f1 16
-JE / JZ 159 Val f1 16
-JG 175 Val f1 16
-JGE 187 Val f1 16
-JL 184 Val f1 16
-JLE 172 Val f1 16
-JMP 6 Val f3 16
-JNE / JNZ 156 Val f1 16
-JNS 152 Val f1 16
-JNU 188 Val f1 16
-JNV 168 Val f1 16
-JS 155 Val f1 16
-JU 191 Val f1 16
-JV 171 Val f1 16
-LD 130 Sym+S+ Val f1 16
-LD 134 Sym+X+ Val f1 16
-LD 138 Sym-S+ Val f1 16
-LD 142 Sym-X+ Val f1 16
-LD 146 SymS++ Val f1 16
-LD 147 SymS+ Val f1 16
-LD 150 SymX++ Val f1 16
-LD 151 SymX+ Val f1 16
-LD 154 SymS-+ Val f1 16
-LD 158 SymX-+ Val f1 16
-LDD 128 Val f1 16
-LDI 137 Val f1 16
-LSL 22528 f2 16
-LSR 28928 f2 16
-NEG 9984 f2 16
-NOP 4080 f2 16
-NOT 11520 f2 16
-OR 116 Val f1 16
-OR 117 SymX, Val f1 16
-OR 118 SymS, Val f1 16
-ORI 119 Val f1 16
-OUT 48128 Val f1 16
-POPF 256 f2 16
-PUSHF 1792 f2 16
-RLC 80 f2 16
-ROL 82 f2 16
-ROR 28930 f2 16
-RRC 28931 f2 16
-RTS 4080 f2 16
-SBB 24 Val f1 16
-SBB 25 SymX, Val f1 16
-SBB 25 SymS, Val f1 16
-SBBI 27 Val f1 16
-ST 162 Sym+S+ Val f1 16
-ST 166 Sym+X+ Val f1 16
-ST 170 Sym-S+ Val f1 16
-ST 174 Sym-X+ Val f1 16
-ST 178 SymS++ Val f1 16
-ST 179 SymS+ Val f1 16
-ST 182 SymX++ Val f1 16
-ST 183 SymX+ Val f1 16
-ST 186 SymS-+ Val f1 16
-ST 190 SymX-+ Val f1 16
-STC 32332 f2 16
-STD 160 Val f1 16
-STI 32513 f2 16
-STU 32354 f2 16
-SUB 16 Val f1 16
-SUB 17 Val f1 16
-SUB 18 Val f1 16
-SUBI 19 Val f1 16
-TAS 464 f2 16
-TAX 192 f2 16
-TSA 25344 f2 16
-TST 76 Val f1 16
-TST 77 SymX, Val f1 16
-TST 78 SymS, Val f1 16
-TSTI 79 Val f1 16
-TXA 25345 f2 16
-XOR 52 Val f1 16
-XOR 53 SymX, Val f1 16
-XOR 54 SymS, Val f1 16
-XORI 55 Val f1 16
+ADC 96 Val parse_alu_st_ld_io 16
+ADC 97 SymX, Val parse_alu_st_ld_io 16
+ADC 98 SymS, Val parse_alu_st_ld_io 16
+ADCI 99 Val parse_alu_st_ld_io 16
+ADD 104 Val parse_alu_st_ld_io 16
+ADD 105 SymX, Val parse_alu_st_ld_io 16
+ADD 106 SymS, Val parse_alu_st_ld_io 16
+ADDI 107 Val parse_alu_st_ld_io 16
+AND 68 Val parse_alu_st_ld_io 16
+AND 69 SymX, Val parse_alu_st_ld_io 16
+AND 70 SymS, Val parse_alu_st_ld_io 16
+ANDI 71 Val parse_alu_st_ld_io 16
+CMP 48 Val parse_alu_st_ld_io 16
+CMP 49 SymX, Val parse_alu_st_ld_io 16
+CMP 50 SymS, Val parse_alu_st_ld_io 16
+CMPI 51 Val parse_alu_st_ld_io 16
+IN 144 Val parse_alu_st_ld_io 16
+LD 130 Sym+S+ Val parse_alu_st_ld_io 16
+LD 134 Sym+X+ Val parse_alu_st_ld_io 16
+LD 138 Sym-S+ Val parse_alu_st_ld_io 16
+LD 142 Sym-X+ Val parse_alu_st_ld_io 16
+LD 146 SymS++ Val parse_alu_st_ld_io 16
+LD 147 SymS+ Val parse_alu_st_ld_io 16
+LD 150 SymX++ Val parse_alu_st_ld_io 16
+LD 151 SymX+ Val parse_alu_st_ld_io 16
+LD 154 SymS-+ Val parse_alu_st_ld_io 16
+LD 158 SymX-+ Val parse_alu_st_ld_io 16
+LDD 128 Val parse_alu_st_ld_io 16
+LDI 137 Val parse_alu_st_ld_io 16
+OR 116 Val parse_alu_st_ld_io 16
+OR 117 SymX, Val parse_alu_st_ld_io 16
+OR 118 SymS, Val parse_alu_st_ld_io 16
+ORI 119 Val parse_alu_st_ld_io 16
+OUT 176 Val parse_alu_st_ld_io 16
+SBB 24 Val parse_alu_st_ld_io 16
+SBB 25 SymX, Val parse_alu_st_ld_io 16
+SBB 25 SymS, Val parse_alu_st_ld_io 16
+SBBI 27 Val parse_alu_st_ld_io 16
+ST 162 Sym+S+ Val parse_alu_st_ld_io 16
+ST 166 Sym+X+ Val parse_alu_st_ld_io 16
+ST 170 Sym-S+ Val parse_alu_st_ld_io 16
+ST 174 Sym-X+ Val parse_alu_st_ld_io 16
+ST 178 SymS++ Val parse_alu_st_ld_io 16
+ST 179 SymS+ Val parse_alu_st_ld_io 16
+ST 182 SymX++ Val parse_alu_st_ld_io 16
+ST 183 SymX+ Val parse_alu_st_ld_io 16
+ST 186 SymS-+ Val parse_alu_st_ld_io 16
+ST 190 SymX-+ Val parse_alu_st_ld_io 16
+STD 160 Val parse_alu_st_ld_io 16
+SUB 16 Val parse_alu_st_ld_io 16
+SUB 17 Val parse_alu_st_ld_io 16
+SUB 18 Val parse_alu_st_ld_io 16
+SUBI 19 Val parse_alu_st_ld_io 16
+TST 76 Val parse_alu_st_ld_io 16
+TST 77 SymX, Val parse_alu_st_ld_io 16
+TST 78 SymS, Val parse_alu_st_ld_io 16
+TSTI 79 Val parse_alu_st_ld_io 16
+XOR 52 Val parse_alu_st_ld_io 16
+XOR 53 SymX, Val parse_alu_st_ld_io 16
+XOR 54 SymS, Val parse_alu_st_ld_io 16
+XORI 55 Val parse_alu_st_ld_io 16
+ASR 28929 parse_full_length 16
+CLC 2020 parse_full_length 16
+CLI 1897 parse_full_length 16
+CLU 1994 parse_full_length 16
+DEC 31488 parse_full_length 16
+DES 3648 parse_full_length 16
+DEX 3456 parse_full_length 16
+INC 0 parse_full_length 16
+INS 1600 parse_full_length 16
+INX 1408 parse_full_length 16
+LSL 22528 parse_full_length 16
+LSR 28928 parse_full_length 16
+NEG 9984 parse_full_length 16
+NOP 8064 parse_full_length 16
+NOT 11520 parse_full_length 16
+POPF 512 parse_full_length 16
+PUSHF 3584 parse_full_length 16
+RLC 20480 parse_full_length 16
+ROL 20992 parse_full_length 16
+ROR 28930 parse_full_length 16
+RRC 28931 parse_full_length 16
+RTS 7936 parse_full_length 16
+STC 32524 parse_full_length 16
+STI 32641 parse_full_length 16
+STU 32546 parse_full_length 16
+TAS 1872 parse_full_length 16
+TAX 1920 parse_full_length 16
+TSA 26368 parse_full_length 16
+TXA 26369 parse_full_length 16
+CALL 7 parse_jump_call 16
+JMP 6 Val parse_jump_call 16
+JA 136 Val $Val parse_rel_jump 16
+JAE 140 Val $Val parse_rel_jump 16
+JNC 140 Val $Val parse_rel_jump 16
+JB 143 Val $Val parse_rel_jump 16
+JC 143 Val $Val parse_rel_jump 16
+JBE 139 Val $Val parse_rel_jump 16
+JE 159 Val $Val parse_rel_jump 16
+JZ 159 Val $Val parse_rel_jump 16
+JG 175 Val $Val parse_rel_jump 16
+JGE 187 Val $Val parse_rel_jump 16
+JL 184 Val $Val parse_rel_jump 16
+JLE 172 Val $Val parse_rel_jump 16
+JNE 156 Val $Val parse_rel_jump 16
+JNZ 156 Val $Val parse_rel_jump 16
+JNS 152 Val $Val parse_rel_jump 16
+JNU 188 Val $Val parse_rel_jump 16
+JNV 168 Val $Val parse_rel_jump 16
+JS 155 Val $Val parse_rel_jump 16
+JU 191 Val $Val parse_rel_jump 16
+JV 171 Val $Val parse_rel_jump 16

@@ -1,105 +1,73 @@
-/home/joshua/General-Assembler/utils/avr_isa_functions.cpp
+/home/stevens/Documents/General-Assembler/utils/avr_isa_functions.cpp
 8
 256
 label: op_name operand;
-ADIW 150 Val Sym: Val Sym, Val parse_add_sub_word 16
-SBIW 151 Val Sym: Val Sym, Val parse_add_sub_word 16
-CLR 9 Val parse_alu_1 16
-LSL 3 Val parse_alu_1 16
-ROL 7 Val parse_alu_1 16
-TST 8 Val parse_alu_1 16
 ADC 7 Val Sym, Val parse_alu_2 16
 ADD 3 Val Sym, Val parse_alu_2 16
+ADIW 150 Val Sym: Val Sym, Val parse_add_sub_word 16
 AND 8 Val Sym, Val parse_alu_2 16
-CP 5 Val Sym, Val parse_alu_2 16
-CPC 1 Val Sym, Val parse_alu_2 16
-CPSE 4 Val Sym, Val parse_alu_2 16
-EOR 9 Val Sym, Val parse_alu_2 16
-MOV 11 Val Sym, Val parse_alu_2 16
-MUL 39 Val Sym, Val parse_alu_2 16
-OR 10 Val Sym, Val parse_alu_2 16
-SBC 2 Val Sym, Val parse_alu_2 16
-SUB 6 Val Sym, Val parse_alu_2 16
 ANDI 7 Val Sym, Val parse_alu_imm 16
-CBR 7 Val Sym, Val parse_alu_imm 16
-CPI 3 Val Sym, Val parse_alu_imm 16
-LDI 14 Val Sym, Val parse_alu_imm 16
-ORI 6 Val Sym, Val parse_alu_imm 16
-SBCI 4 Val Sym, Val parse_alu_imm 16
-SBR 6 Val Sym, Val parse_alu_imm 16
-SUBI 5 Val Sym, Val parse_alu_imm 16
+ASR 1189 Val parse_ld_st_stck_alu 16
+BCLR 4760 Val parse_modify_flag 16
 BLD 248 Val Sym, Val parse_bit_check_load_store 16
-BST 250 Val Sym, Val parse_bit_check_load_store 16
-SBRC 126 Val Sym, Val parse_bit_check_load_store 16
-SBRS 127 Val Sym, Val parse_bit_check_load_store 16
-BRCC 488 Val parse_branch 16
-BRCS 480 Val parse_branch 16
-BREQ 481 Val parse_branch 16
-BRGE 492 Val parse_branch 16
-BRHC 493 Val parse_branch 16
-BRHS 485 Val parse_branch 16
-BRID 495 Val parse_branch 16
-BRIE 487 Val parse_branch 16
-BRLO 480 Val parse_branch 16
-BRLT 484 Val parse_branch 16
-BRMI 482 Val parse_branch 16
-BRNE 489 Val parse_branch 16
-BRPL 490 Val parse_branch 16
-BRSH 488 Val parse_branch 16
-BRTC 494 Val parse_branch 16
-BRTS 486 Val parse_branch 16
-BRVC 491 Val parse_branch 16
-BRVS 483 Val parse_branch 16
-BRBC 61 Val Sym, Val parse_branch_with_bit 16
-BRBS 61 Val Sym, Val parse_branch_with_bit 16
-CALL 599 Val parse_call_jmp 32
-JMP 598 Val parse_call_jmp 32
-CBI 152 Val Sym, Val parse_clear_set_bit 16
-SBI 154 Val Sym, Val parse_clear_set_bit 16
-SBIC 153 Val Sym, Val parse_clear_set_bit 16
-SBIS 155 Val Sym, Val parse_clear_set_bit 16
-DES 2379 Val parse_des_ser 16
-SER 3839 Val parse_des_ser 16
+BRBC 61 Val Sym, Val $Val parse_branch_with_bit 16
+BRBS 61 Val Sym, Val $Val parse_branch_with_bit 16
+BRCC 488 Val $Val parse_branch 16
+BRCS 480 Val $Val parse_branch 16
 BREAK 38200 parse_full_length 16
+BREQ 481 Val $Val parse_branch 16
+BRGE 492 Val $Val parse_branch 16
+BRHC 493 Val $Val parse_branch 16
+BRHS 485 Val $Val parse_branch 16
+BRID 495 Val $Val parse_branch 16
+BRIE 487 Val $Val parse_branch 16
+BRLO 480 Val $Val parse_branch 16
+BRLT 484 Val $Val parse_branch 16
+BRMI 482 Val $Val parse_branch 16
+BRNE 489 Val $Val parse_branch 16
+BRPL 490 Val $Val parse_branch 16
+BRSH 488 Val $Val parse_branch 16
+BRTC 494 Val $Val parse_branch 16
+BRTS 486 Val $Val parse_branch 16
+BRVC 491 Val $Val parse_branch 16
+BRVS 483 Val $Val parse_branch 16
+BSET 4744 Val parse_modify_flag 16
+BST 250 Val Sym, Val parse_bit_check_load_store 16
+CALL 599 Val $Val parse_call_jmp 32
+CBI 152 Val Sym, Val parse_clear_set_bit 16
+CBR 7 Val Sym, Val parse_alu_imm 16
 CLC 37904 parse_full_length 16
 CLH 38008 parse_full_length 16
 CLI 38040 parse_full_length 16
 CLN 37928 parse_full_length 16
+CLR 9 Val parse_alu_1 16
 CLS 37992 parse_full_length 16
 CLT 38024 parse_full_length 16
 CLV 37960 parse_full_length 16
 CLZ 37896 parse_full_length 16
+COM 1184 Val parse_ld_st_stck_alu 16
+CP 5 Val Sym, Val parse_alu_2 16
+CPC 1 Val Sym, Val parse_alu_2 16
+CPI 3 Val Sym, Val parse_alu_imm 16
+CPSE 4 Val Sym, Val parse_alu_2 16
+DEC 1194 Val parse_ld_st_stck_alu 16
+DES 2379 Val parse_des_ser 16
 EICALL 38297 parse_full_length 16
 EIJMP 37913 parse_full_length 16
 ELPM 38360 parse_full_length 16
 ELPM 38360 parse_full_length 16
-ICALL 38281 parse_full_length 16
-IJMP 37905 parse_full_length 16
-LPM 38344 parse_full_length 16
-NOP 0 parse_full_length 16
-RET 38280 parse_full_length 16
-RETI 38296 parse_full_length 16
-SEC 37896 parse_full_length 16
-SEH 37976 parse_full_length 16
-SEI 38008 parse_full_length 16
-SEN 37928 parse_full_length 16
-SES 37968 parse_full_length 16
-SET 37992 parse_full_length 16
-SEV 37944 parse_full_length 16
-SEZ 37912 parse_full_length 16
-SLEEP 38312 parse_full_length 16
-SPM 38376 parse_full_length 16
-SPM 38392 SymZ+ parse_full_length 16
-WDR 38344 parse_full_length 16
-IN 22 Val Sym, Val parse_io 16
-OUT 23 Val Sym, Val parse_io 16
-ASR 1189 Val parse_ld_st_stck_alu 16
-COM 1184 Val parse_ld_st_stck_alu 16
-DEC 1194 Val parse_ld_st_stck_alu 16
 ELPM 1158 Val Sym,Z parse_ld_st_stck_alu 16
 ELPM 1159 Val Sym,Z+ parse_ld_st_stck_alu 16
 ELPM 1158 Val Sym,Z parse_ld_st_stck_alu 16
+EOR 9 Val Sym, Val parse_alu_2 16
+FMUL 13 Val Sym, Val parse_mul 16
+FMULS 14 Val Sym, Val parse_mul 16
+FMULSU 15 Val Sym, Val parse_mul 16
+ICALL 38281 parse_full_length 16
+IJMP 37905 parse_full_length 16
+IN 22 Val Sym, Val parse_io 16
 INC 1187 Val parse_ld_st_stck_alu 16
+JMP 598 Val $val parse_call_jmp 32
 LAC 1174 SymZ, Val parse_ld_st_stck_alu 16
 LAS 1173 SymZ, Val parse_ld_st_stck_alu 16
 LAT 1175 SymZ, Val parse_ld_st_stck_alu 16
@@ -112,13 +80,55 @@ LD 1032 Val Sym,Y parse_ld_st_stck_alu 16
 LD 1161 Val Sym,Y+ parse_ld_st_stck_alu 16
 LD 1162 Val Sym,-Y parse_ld_st_stck_alu 16
 LD 1164 Val Sym,X parse_ld_st_stck_alu 16
+LD 17 Val Sym,-Y+ Val parse_load_store_16 16
+LD 16 Val Sym,-Z+ Val parse_load_store_16 16
+LDI 14 Val Sym, Val parse_alu_imm 16
+LDS 20 Val Sym, Val parse_load_store_16 16
+LDS 1152 Val Sym, Val parse_load_store_32 32
+LPM 38344 parse_full_length 16
 LPM 1156 Val Sym,Z parse_ld_st_stck_alu 16
 LPM 1157 Val Sym,Z+ parse_ld_st_stck_alu 16
+LSL 3 Val parse_alu_1 16
 LSR 1190 Val parse_ld_st_stck_alu 16
+MOV 11 Val Sym, Val parse_alu_2 16
+MOVW 1 Val Sym,: Val Sym, Val Sym,: Val parse_mov_word 16
+MUL 39 Val Sym, Val parse_alu_2 16
+MULS 2 Val Sym, Val parse_mul 16
+MULSU 12 Val Sym, Val parse_mul 16
 NEG 1185 Val parse_ld_st_stck_alu 16
+NOP 0 parse_full_length 16
+OR 10 Val Sym, Val parse_alu_2 16
+ORI 6 Val Sym, Val parse_alu_imm 16
+OUT 23 Val Sym, Val parse_io 16
 POP 1167 Val parse_ld_st_stck_alu 16
 PUSH 1183 Val parse_ld_st_stck_alu 16
+RCALL 13 Val parse_rcall_rjmp 16
+RET 38280 parse_full_length 16
+RETI 38296 parse_full_length 16
+RJMP 12 Val parse_rcall_rjmp 16
+ROL 7 Val parse_alu_1 16
 ROR 1191 Val parse_ld_st_stck_alu 16
+SBC 2 Val Sym, Val parse_alu_2 16
+SBCI 4 Val Sym, Val parse_alu_imm 16
+SBI 154 Val Sym, Val parse_clear_set_bit 16
+SBIC 153 Val Sym, Val parse_clear_set_bit 16
+SBIS 155 Val Sym, Val parse_clear_set_bit 16
+SBIW 151 Val Sym: Val Sym, Val parse_add_sub_word 16
+SBR 6 Val Sym, Val parse_alu_imm 16
+SBRC 126 Val Sym, Val parse_bit_check_load_store 16
+SBRS 127 Val Sym, Val parse_bit_check_load_store 16
+SEC 37896 parse_full_length 16
+SEH 37976 parse_full_length 16
+SEI 38008 parse_full_length 16
+SEN 37928 parse_full_length 16
+SER 3839 Val parse_des_ser 16
+SES 37968 parse_full_length 16
+SET 37992 parse_full_length 16
+SEV 37944 parse_full_length 16
+SEZ 37912 parse_full_length 16
+SLEEP 38312 parse_full_length 16
+SPM 38376 parse_full_length 16
+SPM 38392 SymZ+ parse_full_length 16
 ST 1040 SymZ, Val parse_ld_st_stck_alu 16
 ST 1180 SymX, Val parse_ld_st_stck_alu 16
 ST 1181 SymX+, Val parse_ld_st_stck_alu 16
@@ -128,23 +138,13 @@ ST 1177 SymY+, Val parse_ld_st_stck_alu 16
 ST 1178 Sym-Y, Val parse_ld_st_stck_alu 16
 ST 1169 SymZ+, Val parse_ld_st_stck_alu 16
 ST 1170 Sym-Z, Val parse_ld_st_stck_alu 16
-SWAP 1186 Val parse_ld_st_stck_alu 16
-XCH 1172 SymZ, Val parse_ld_st_stck_alu 16
-LD 17 Val Sym,-Y+ Val parse_load_store_16 16
-LD 16 Val Sym,-Z+ Val parse_load_store_16 16
-LDS 20 Val Sym, Val parse_load_store_16 16
 STD 19 SymY+ Val Sym, Val parse_load_store_16 16
 STD 18 SymZ+ Val Sym, Val parse_load_store_16 16
 STS 21 Val Sym, Val parse_load_store_16 16
-LDS 1152 Val Sym, Val parse_load_store_32 32
 STS 1168 Val Sym, Val parse_load_store_32 32
-BCLR 4760 Val parse_modify_flag 16
-BSET 4744 Val parse_modify_flag 16
-MOVW 1 Val Sym,: Val Sym, Val Sym,: Val parse_mov_word 16
-FMUL 13 Val Sym, Val parse_mul 16
-FMULS 14 Val Sym, Val parse_mul 16
-FMULSU 15 Val Sym, Val parse_mul 16
-MULS 2 Val Sym, Val parse_mul 16
-MULSU 12 Val Sym, Val parse_mul 16
-RCALL 13 Val parse_rcall_rjmp 16
-RJMP 12 Val parse_rcall_rjmp 16
+SUB 6 Val Sym, Val parse_alu_2 16
+SUBI 5 Val Sym, Val parse_alu_imm 16
+SWAP 1186 Val parse_ld_st_stck_alu 16
+TST 8 Val parse_alu_1 16
+WDR 38344 parse_full_length 16
+XCH 1172 SymZ, Val parse_ld_st_stck_alu 16
