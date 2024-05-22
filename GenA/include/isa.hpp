@@ -44,10 +44,14 @@ class isa {
         // invalid code macro and display an error message.
 		code_macro code_mac(std::string op_name, std::string operand);
 
+        // Technically these are helper functions but are useful for other 
+        // objects.
 		// This function takes in a string and returns a vector that is the 
-		// strings separated by spaces. Technically a helper function but 
-        // useful for other objects.
+		// strings separated by spaces. 
 		std::vector<std::string> split_by_spaces(const std::string& str);
+        // This function returns the input but all lowercase and stripped of 
+        // white space.
+        std::string strip_and_lower(std::string& input);
 
         // Accessors	
 		std::vector<size_t> word_sizes();
@@ -71,7 +75,6 @@ class isa {
 		std::unordered_multimap<std::string, code_macro> code_map_;
 
 		// Helper functions.
-
         // This file takes in a path to a file and compiles it to a shared 
         // library. If The file can not be compiled an error message is 
         // displayed and the program exits.
@@ -112,8 +115,5 @@ class isa {
         // This function takes an operand template as a vector of strings and an
         // string operand that gets modified and determines if they match.
         bool op_match(std::vector<std::string> op_temp, std::string& op);
-        // This function returns the input but all lowercase and stripped of 
-        // white space.
-        std::string strip_and_lower(std::string& input);
 };
 #endif // ISA_HPP
