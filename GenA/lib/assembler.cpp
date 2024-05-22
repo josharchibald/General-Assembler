@@ -19,6 +19,7 @@
 #include <utility>
 #include <algorithm>
 #include <iomanip>
+#include <unordered_set>
 
 // Constants.
 const std::string PSEUDO_OP = ".";
@@ -46,7 +47,6 @@ assembler::~assembler() {};
 
 // Public functions.
 void assembler::first_pass(void) {
-    std::string valid_extension;
     std::list<std::pair<std::string, std::ifstream>> asm_file_stack;
     std::ifstream entry_file;
     std::string line;
@@ -55,8 +55,7 @@ void assembler::first_pass(void) {
     bool next_file;
     
     // Set the valid assembly extension to be the extension of the entry point.
-    valid_extension = entry_path_.substr(entry_path_.find_last_of('.'), \
-                                         entry_path_.length() - 1);
+    valid_extension_ = entry_path_.substr(entry_path_.find_last_of('.'));
 
     // Push the entry file onto the file stack.
     entry_file.open(entry_path_);
@@ -153,11 +152,10 @@ void assembler::pseudo_op_handler(std::string line, bool& next_file, \
                        std::list<std::pair<std::string, std::ifstream>>& \
                        asm_file_stack, size_t line_num) {
     std::vector<std::string> line_data;
-    (void) next_file;
     line_data = cpu_isa_.split_by_spaces(line.substr(PSEUDO_OP.length()));
     // Conditionals for pseudo operations as they are all very different.
     // The number after the code location pseudo op gets set to the pc. 
-    if (line_data.at(0) == CODE_LOC) {
+    if (cpu_isa_.strip_and_lower(line_data.at(0)) == CODE_LOC) {
         if (line_data.size() == CODE_LOC_SIZE) {
             try {
 				std::stoul(line_data.at(CODE_LOC_SIZE - 1));
@@ -169,10 +167,11 @@ void assembler::pseudo_op_handler(std::string line, bool& next_file, \
                 " in file: " << asm_file_stack.back().first << std::endl;
                 return;
             }
-            pc_ = std::stoul(line_data.at(CODE_LOC_SIZE - 1));
+            pc_ = std::stoul(line_data.at(CODE_LOC_SIZE - 1)) * \
+                  cpu_isa_.word_sizes().front();
         }
     }
-    else if (line_data.at(0) == VAR_DEC) {
+    else if (cpu_isa_.strip_and_lower(line_data.at(0)) == VAR_DEC) {
         std::string var_name;
         size_t *memory = &pc_;
         size_t bit_num = cpu_isa_.word_sizes().front();
@@ -213,7 +212,7 @@ void assembler::pseudo_op_handler(std::string line, bool& next_file, \
                       (bit_num * std::stoul(line_data.at(VAR_DEC_SIZE - 1)));
         }
     }
-    else if (line_data.at(0) == CONST) {
+    else if (cpu_isa_.strip_and_lower(line_data.at(0)) == CONST) {
         std::string const_name;
         // The string after the constant declaration pseudo operation is put
         // into the symbol table with its value.
@@ -243,20 +242,38 @@ void assembler::pseudo_op_handler(std::string line, bool& next_file, \
             }           
         }
     }
-    else if (line_data.at(0) == INCLUDE) {
+    else if (cpu_isa_.strip_and_lower(line_data.at(0)) == INCLUDE) {
         if (line_data.size() == INCLUDE_SIZE) {
-            std::cout << "Test";
+            std::string new_file_path = line_data.at(INCLUDE_SIZE - 1);
+            std::ifstream new_file(new_file_path);
+            bool add_file = true;
+            // If an included file cannot be opened, has already been included,
+            // or does not have the right extension, display an error message 
+            // and don't add the file.
+            if (!new_file) {
+                std::cerr << "Error: Unable to open file: " << new_file_path \
+                          << ". File not included." << std::endl;
+                add_file = false;
+            }
+            if (asm_file_paths_.find(new_file_path) != asm_file_paths_.end()) {
+                std::cerr << "Error: File: " << new_file_path << " already " \
+                          << "included. File skipped." << std::endl;
+                add_file = false;
+            }
+            if (new_file_path.substr(new_file_path.find_last_of('.')) !=
+                valid_extension_) {
+                std::cerr << "Error: File: " << new_file_path << " does not " \
+                          << "have valid extension: " << valid_extension_ << \
+                          ". File skipped." << std::endl;
+                add_file = false;
+            }
+            // Indicate that the next file on the stack should be moved to and 
+            // add the included file.
+            if (add_file) {
+                asm_file_stack.push_back({new_file_path, std::move(new_file)});
+                asm_file_paths_.insert(new_file_path);
+                next_file = true;
+            }
         }
     }
-}
-
-bool assembler::file_in_list(const \
-    std::list<std::pair<std::string, std::ifstream>>& file_list, \
-    const std::string& filename) {
-    std::list<std::pair<std::string, std::ifstream>>::const_iterator it;
-    it = std::find_if(file_list.begin(), file_list.end(), \
-    [&filename](const std::pair<std::string, std::ifstream>& element) {
-        return element.first == filename;
-    });
-    return it != file_list.end();
 }

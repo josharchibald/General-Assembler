@@ -42,7 +42,7 @@ const size_t NUM_BITS_REV_IDX = 1;
 const std::string COMMENT = ";";
 const std::string SYMBOL = "Sym";
 const std::string VALUE = "Val";
-const std::string PC = "VAL$";
+const std::string PC = "Val$";
 
 // Constructor.
 isa::isa(std::string isa_file_path) {
