@@ -14,6 +14,7 @@
 #include "asm_line.hpp"
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <iostream>
 
 #ifndef ASSEMBLER_HPP
 #define ASSEMBLER_HPP
@@ -25,16 +26,17 @@ class assembler {
 		// Takes the path to the entry path and the path to the isa file as 
         // strings and initializes all data.
 		assembler(std::string entry_path, std::string isa_path, \
-                  std::string output_folder_path, bool list);
+                  std::string output_folder_path, bool verbose, bool log,\
+                  bool list);
 		
 		// Destructor.
 		~assembler();
 
 		// Public Methods
-        // Performs the first pass on the assembly and include file objects. 
-        // This updates the symbol_table, ref_table, asm_prog, and the 
-        // data_used data.
-        void first_pass (void);
+        // Performs the first pass on the assembly files. 
+        void first_pass(void);
+        // Performs the second pass the assembly files.
+        void second_pass(void);
 
 
 	// Private usage only.
@@ -48,6 +50,10 @@ class assembler {
         isa cpu_isa_; 
         // The path to the output folder.
         std::string output_folder_path_;
+        // Whether to output to terminal or not.
+        bool verbose_;        
+        // Whether to log output to file or not.
+        bool log_;
         // Whether to have a listing output or not.
         bool list_;
         // The program counter static for user library to use.

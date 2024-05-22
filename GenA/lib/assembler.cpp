@@ -5,6 +5,8 @@
 // 05/19/24 Joshua Archibald Implemented first_pass.
 // 05/20/24 Joshua Archibald Debugged first_pass.
 // 05/20/24 Joshua Archibald Pseudo operations implemented.
+// 05/21/24 Joshua Archibald Pseudo operations debugged.
+// 05/21/24 Joshua Archibald Implemented second_pass.
 
 
 // Included libraries.
@@ -36,10 +38,12 @@ const size_t INCLUDE_SIZE = 2;
 // Constructor.
 
 assembler::assembler(std::string entry_path, std::string isa_file_path, \
-                     std::string output_folder_path, bool list) : \
+                     std::string output_folder_path, bool verbose, bool log,
+                     bool list) : \
                     entry_path_(entry_path), cpu_isa_(isa_file_path), \
-                    output_folder_path_(output_folder_path), list_(list), \
-                    pc_(0), data_used_(0) {}
+                    output_folder_path_(output_folder_path), \
+                    verbose_(verbose), log_(log), list_(list), pc_(0), \
+                    data_used_(0) {}
 
 
 // Destructor
@@ -145,6 +149,10 @@ void assembler::first_pass(void) {
     for (const auto& pair : symbol_table_) {
         std::cout << "|" << pair.first << "|" << pair.second << std::endl;
     }
+}
+
+void assembler::second_pass(void) {
+    return;
 }
 
 // Helper functions.
