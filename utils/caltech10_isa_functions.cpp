@@ -51,7 +51,7 @@ extern "C" {
         size_t label_toi = parse_value(label);
         // shift the opcode such that the first opcode_bit_count bits are the code
         size_t opcode_shifted = opcode << (opcode_FULL_SIZE - opcode_bit_count);
-        return opcode_shifted | label;
+        return opcode_shifted | label_toi;
     }
     size_t parse_rel_jump(size_t opcode, std::string label, size_t program_counter){
         size_t opcode_shifted = opcode << 8;
