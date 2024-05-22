@@ -13,25 +13,37 @@
 #include <filesystem>
 #include <fstream>
 #include "assembler.hpp"
+#include <streambuf>
 
 // Used constants.
-const char* FILE_FLAG = "--file";
-const char* ISA_FLAG = "--isa";
-const char* OUT_FLAG = "--output";
-const char* HELP_FLAG = "--help";
-const char* VERSION_FLAG = "--version";
-const char* LIST_FLAG = "--list";
-const char* LOG_FLAG = "--log";
-const char* VERBOSE_FLAG = "--verbose";
+const char *FILE_FLAG = "--file";
+const char *ISA_FLAG = "--isa";
+const char *OUT_FLAG = "--output";
+const char *HELP_FLAG = "--help";
+const char *VERSION_FLAG = "--version";
+const char *LIST_FLAG = "--list";
+const char *LOG_FLAG = "--log";
+const char *VERBOSE_FLAG = "--verbose";
+ 
+const char  *FILE_FLAG_SHORT = "-f";
+const char *ISA_FLAG_SHORT = "-i";
+const char *OUT_FLAG_SHORT = "-o";
+const char *HELP_FLAG_SHORT = "-h";
+const char *VERSION_FLAG_SHORT = "-r";
+const char *LIST_FLAG_SHORT = "-t";
+const char *LOG_FLAG_SHORT = "-l";
+const char *VERBOSE_FLAG_SHORT = "-v";
+const char *LOG_FILE_NAME = "log_gena";
+const char *DEFAULT_OUTPUT_PATH = "output_gena";
 
-const char* FILE_FLAG_SHORT = "-f";
-const char* ISA_FLAG_SHORT = "-i";
-const char* OUT_FLAG_SHORT = "-o";
-const char* HELP_FLAG_SHORT = "-h";
-const char* VERSION_FLAG_SHORT = "-v";
-const char* LIST_FLAG_SHORT = "-l";
-const char* LOG_FLAG_SHORT = "-g";
-const char* VERBOSE_FLAG_SHORT = "-b";
+
+// Null stream buffer to discard output
+class NullStreamBuf : public std::streambuf {
+protected:
+    virtual int overflow(int c) override {
+        return c; // Discard character
+    }
+};
 
 // Helper functions.
 
@@ -43,23 +55,23 @@ void usageError(char *prog) {
 	<< "\t\tSpecify the main file path (required).\n" \
 	<< "\t-i, --isa <ISA file path>\n" \
 	<< "\t\tSpecify the ISA file path (required).\n" \
-	<< "\t-o, --output <output folder>\n" \
-	<< "\t\tSpecify the output folder path (optional).\n" \
-	<< "\t-l, --list\n" \
+	<< "\t-o, --output <output file>\n" \
+	<< "\t\tSpecify the output file path (optional).\n" \
+	<< "\t-t, --list\n" \
 	<< "\t\tProduce a listing file.\n" \
-	<< "\t-g, --log\n" \
+	<< "\t-l, --log\n" \
 	<< "\t\tLog all output to gena.log in the current directory.\n" \
-	<< "\t-b, --verbose\n" \
+	<< "\t-v, --verbose\n" \
 	<< "\t\tOutput all information to the terminal.\n" \
 	<< "\t-h, --help\n" \
 	<< "\t\tDisplay this help message and exit.\n" \
-	<< "\t-v, --version\n" \
+	<< "\t-r, --version\n" \
 	<< "\t\tDisplay the version information and exit.\n" \
 	<< "\nNotes:\n" \
 	<< "\t- The --output flag is optional. If not specified, the default\n" \
-	<< "\t  output folder will be the parent directory of the main file.\n" \
+	<< "\t  output file will be output_gena.HEX in the working directory .\n" \
 	<< "\t- Both --file and --isa flags must be used with valid paths.\n" \
-	<< "\t- Both --log and --verbose flags can be used simultaneously.\n" \
+	<< "\t- Both --log and --verbose flags cannot be used simultaneously.\n" \
 	<< std::endl;
 }
 
@@ -102,7 +114,7 @@ int main(int argc, char* argv[]) {
     // These variables hold the data parsed from the command line arguments. 
 	std::filesystem::path main_file_path;
 	std::filesystem::path isa_file_path;
-	std::filesystem::path output_folder_path;
+	std::filesystem::path output_file_path = DEFAULT_OUTPUT_PATH;
 	bool list, log, verbose;
 
 	// Call the usage error and exit if there are no command line arguments.
@@ -130,7 +142,7 @@ int main(int argc, char* argv[]) {
 		// If the output folder flag is set, handle it.
 		if (((std::strcmp(argv[i], OUT_FLAG) == 0) || 
 			 (std::strcmp(argv[i], OUT_FLAG_SHORT) == 0)) && (i != argc - 1)) {
-			path_flag_handler(output_folder_path, argv[i + 1], argv[0]);
+			path_flag_handler(output_file_path, argv[i + 1], argv[0]);
 		}
 		// If the help flag is set, handle it.
 		if ((std::strcmp(argv[i], HELP_FLAG) == 0) || 
@@ -169,10 +181,63 @@ int main(int argc, char* argv[]) {
 		usageError(argv[0]);
 	    exit(EXIT_FAILURE);
 	}
-    (void) log; 
-    (void) verbose;
-    assembler gena(main_file_path, isa_file_path, output_folder_path, verbose,
-                   log, list);
-    gena.first_pass();
+    std::ofstream log_file;
+    std::ostringstream log_name;
+    if (log) {
+        auto t = std::time(nullptr);
+        auto tm = *std::localtime(&t);
+
+        log_name << LOG_FILE_NAME << std::put_time(&tm, "%M-%S") << ".log";
+        log_file.open(log_name.str(), std::ios::app);
+        // Redirect std::cerr and std::clog to the error file.
+        if (!log_file.is_open()) {
+            std::cerr << "Failed to open or create the log file: " \
+            << log_name.str() << std::endl;
+            // Exit if the file can't be opened.
+            exit(EXIT_FAILURE);
+        }
+    }
+    // Backup original buffers
+    std::streambuf* cerr_buf = std::cerr.rdbuf();
+    std::streambuf* clog_buf = std::clog.rdbuf();
+
+    if (log && verbose) {
+        std::clog << "Warning: Cannot use both log and verbose flags at the " \
+        << "same time. Outputting to log file " << log_name.str() << " only." \
+        << std::endl;
+    } else if (log) {
+        // Redirect std::cerr and std::clog to the file.
+        std::cerr.rdbuf(log_file.rdbuf());
+        std::clog.rdbuf(log_file.rdbuf());
+    } else if (verbose) {
+        // Reset std::cerr and std::clog to the console.
+        std::cerr.rdbuf(cerr_buf);
+        std::clog.rdbuf(clog_buf);
+    }
+    else {
+        NullStreamBuf null_buf;
+        // Suppress all output.
+        std::cerr.rdbuf(&null_buf);
+        std::clog.rdbuf(&null_buf);
+    }
+
+    // Create and use the assembler object.
+    assembler gena(main_file_path, isa_file_path, output_file_path, verbose, \
+    list);
+    if (gena.first_pass()) {
+        gena.second_pass();
+    }
+    else {
+        std::cout << "Failed. See log file using -l flag." << std::endl;
+    }
+    // Reset std::cerr and std::clog to their original buffers before exiting.
+    std::cerr.rdbuf(cerr_buf);
+    std::clog.rdbuf(clog_buf);
+
+    if (log_file.is_open()) {
+        log_file.close();
+    }
 	return 0;
 }
+
+

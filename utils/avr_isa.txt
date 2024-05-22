@@ -1,4 +1,5 @@
-/home/stevens/Documents/General-Assembler/utils/avr_isa_functions.cpp
+; Steven Lei AVR ISA 
+/home/joshua/General-Assembler/utils/avr_isa_functions.cpp
 8
 256
 label: op_name operand;
@@ -8,7 +9,7 @@ ADIW 150 Val Sym: Val Sym, Val parse_add_sub_word 16
 AND 8 Val Sym, Val parse_alu_2 16
 ANDI 7 Val Sym, Val parse_alu_imm 16
 ASR 1189 Val parse_ld_st_stck_alu 16
-BCLR 4760 Val parse_modify_flag 16
+BCLR 4760 Val parse_modify_flags 16
 BLD 248 Val Sym, Val parse_bit_check_load_store 16
 BRBC 61 Val Sym, Val $Val parse_branch_with_bit 16
 BRBS 61 Val Sym, Val $Val parse_branch_with_bit 16
@@ -31,7 +32,7 @@ BRTC 494 Val $Val parse_branch 16
 BRTS 486 Val $Val parse_branch 16
 BRVC 491 Val $Val parse_branch 16
 BRVS 483 Val $Val parse_branch 16
-BSET 4744 Val parse_modify_flag 16
+BSET 4744 Val parse_modify_flags 16
 BST 250 Val Sym, Val parse_bit_check_load_store 16
 CALL 599 Val $Val parse_call_jmp 32
 CBI 152 Val Sym, Val parse_clear_set_bit 16
@@ -67,7 +68,7 @@ ICALL 38281 parse_full_length 16
 IJMP 37905 parse_full_length 16
 IN 22 Val Sym, Val parse_io 16
 INC 1187 Val parse_ld_st_stck_alu 16
-JMP 598 Val $val parse_call_jmp 32
+JMP 598 Val $Val parse_call_jmp 32
 LAC 1174 SymZ, Val parse_ld_st_stck_alu 16
 LAS 1173 SymZ, Val parse_ld_st_stck_alu 16
 LAT 1175 SymZ, Val parse_ld_st_stck_alu 16

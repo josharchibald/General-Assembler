@@ -38,4 +38,3 @@ size_t code_macro::num_inst_bits(void) {
     return num_inst_bits_;
 }
 
-// Helper functions.

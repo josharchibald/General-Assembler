@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string>
 #include <unordered_map>
+#include <assembler.hpp>
+
 
 #ifndef ASM_LINE_HPP
 #define ASM_LINE_HPP
@@ -39,6 +41,11 @@ class asm_line {
         // This function takes in the isa of a cpu and returns the size in bits
         // of this line of assembly.
         size_t size(isa cpu_isa);
+        // This function takes in the isa of a cpu and returns the program data
+        // as a size_t.
+        size_t assemble(isa cpu_isa, \
+                        std::unordered_multimap<std::string, size_t> table, \
+                        size_t pc);
 		
 		// Accessors
 		// All directly from data members.

@@ -10,14 +10,14 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <list>
-#include "isa.hpp"
-#include "asm_line.hpp"
 #include <sys/ioctl.h>
-#include <unistd.h>
 #include <iostream>
+#include <isa.hpp>
 
 #ifndef ASSEMBLER_HPP
 #define ASSEMBLER_HPP
+
+class asm_line;
 
 class assembler {
 	// Publicly usable.
@@ -26,15 +26,15 @@ class assembler {
 		// Takes the path to the entry path and the path to the isa file as 
         // strings and initializes all data.
 		assembler(std::string entry_path, std::string isa_path, \
-                  std::string output_folder_path, bool verbose, bool log,\
-                  bool list);
+                  std::string output_folder_path, bool verbose, bool list);
 		
 		// Destructor.
 		~assembler();
 
 		// Public Methods
-        // Performs the first pass on the assembly files. 
-        void first_pass(void);
+        // Performs the first pass on the assembly files. Returns true if
+        // successful.
+        bool first_pass(void);
         // Performs the second pass the assembly files.
         void second_pass(void);
 
@@ -48,12 +48,10 @@ class assembler {
         std::string valid_extension_;
         // The ISA object for the cpu being assembled.
         isa cpu_isa_; 
-        // The path to the output folder.
-        std::string output_folder_path_;
+        // The path to the output file.
+        std::string output_file_path_;
         // Whether to output to terminal or not.
         bool verbose_;        
-        // Whether to log output to file or not.
-        bool log_;
         // Whether to have a listing output or not.
         bool list_;
         // The program counter static for user library to use.
@@ -71,14 +69,11 @@ class assembler {
         // This function takes in a line with a pseudo operation as a string, a 
         // file bool to modify and a file name file pair list to modify and 
         // a line number and updates the data members and some args depending on 
-        // the lines pseudo operation. 
-        void pseudo_op_handler(std::string line, bool& next_file, \
-             std::list<std::pair<std::string, std::ifstream>>& asm_file_stack, \
-             size_t line_num);
-        // Function to get terminal height.
-        size_t get_terminal_height();
-        // Function to print status at the bottom of the terminal.
-        void print_to_user(const std::string& message);
+        // the lines pseudo operation. Returns true if successful, and false if
+        // not, an error message is also displayed.
+        bool pseudo_op_handler(std::string line, bool& next_file, \
+        std::vector<std::pair<std::string, std::ifstream>>& asm_file_stack, \
+        size_t line_num);
 };
 
 #endif // ASSEMBLER_HPP

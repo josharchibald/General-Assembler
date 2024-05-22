@@ -1,6 +1,4 @@
-.org 1
-hello:
-add r16, r4;
+.org 6
 
 .include utils/and.s
 

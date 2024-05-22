@@ -4,6 +4,7 @@
 // 05/18/24 Joshua Archibald Initial revision.
 // 05/19/24 Joshua Archibald Implemented parse_asm.
 // 05/20/24 Joshua Archibald Implemented code_mac.
+// 05/20/24 Joshua Archibald Operation match function modified to save values.
 
 // Included libraries.
 #include "isa.hpp"
@@ -42,7 +43,6 @@ const size_t NUM_BITS_REV_IDX = 1;
 const std::string COMMENT = ";";
 const std::string SYMBOL = "Sym";
 const std::string VALUE = "Val";
-const std::string PC = "$Val";
 
 // Constructor.
 isa::isa(std::string isa_file_path) {
@@ -143,6 +143,7 @@ isa::isa(std::string isa_file_path) {
         parse_isa_code_macro(isa_line_data, isa_file_path, line_num);
         line_num++;
     }
+    std::clog << "\nISA file " << isa_file_path << " parsed." << std::endl;
     isa_file.close();
 }
 
@@ -206,16 +207,20 @@ asm_line isa::parse_asm(std::string line, std::string file_path) {
 
 code_macro isa::code_mac(std::string op_name, std::string operand) {
     std::vector<std::string> op_temp;
+    std::vector<std::string> args;
+    code_macro return_macro = code_macro(ISA_INVALID, \
+    std::vector<std::string>(), NULL, ISA_INVALID);
     auto macros = code_map_.equal_range(op_name);
     for (auto macro = macros.first; macro != macros.second; ++macro) {
         op_temp = macro->second.operand_template();
-        if (op_match(op_temp, operand)) {
-            return macro->second;
+        args = op_match(op_temp, operand);
+        if (!args.empty()) {
+            return_macro = macro->second;
+            return_macro.arguments = args;
         }
     }
     // Return invalid code macro and display error message if none found.
-    return code_macro(ISA_INVALID, std::vector<std::string>(), NULL, \
-                      ISA_INVALID);
+    return return_macro;
 }
 
 // Accessors	
@@ -231,43 +236,53 @@ size_t isa::harv_not_princ(void) {
 		
 
 // Helper functions.
-bool isa::op_match(std::vector<std::string> op_temp, std::string& op) {
+std::vector<std::string> isa::op_match(std::vector<std::string> op_temp, \
+                                       std::string& op) {
     bool prev_val = false;
+    std::vector<std::string> arguments;
     // Go through each sting in the template.
-    for (std::string sym : op_temp) {
-        if (sym.find(SYMBOL) == 0) {
-            sym = sym.substr(SYMBOL.length());
-            // If for any SYMBOL symbol in the template the string designated to
-            // it is not in the remaining operand, return false.
-            if (!op.find(sym)) {
-                return false;
+    if (!op_temp.empty()) {
+        for (std::string sym : op_temp) {
+            if (sym.find(SYMBOL) == 0) {
+                sym = sym.substr(SYMBOL.length());
+                // If for any SYMBOL symbol in the template the string designated to
+                // it is not in the remaining operand, return false.
+                if (!op.find(sym)) {
+                    return std::vector<std::string>();;
+                }
+                // If the string is found, and the previous symbol was a value, the
+                // operand can be cut off to the string symbol and that value can
+                // be added to the vector of args.
+                else if (prev_val) {
+                    arguments.push_back(op.substr(0, op.find(sym)));
+                    op = op.substr(op.find(sym) + sym.length());
+                }
+                // If the previous symbol was not a value it must be checked that 
+                // the string SYMBOL is at the start of the line before cutting it
+                else if (op.find(sym) == 0) {
+                    op = op.substr(op.find(sym) + sym.length());
+                }
+                // If its not at the start and the symbol before was not a value 
+                // then the operand does not match.
+                else {
+                    return std::vector<std::string>();
+                }
+                prev_val = false;
             }
-            // If the string is found, and the previous symbol was a value, the
-            // operand can be cut off to the string symbol regardless of if it
-            // is at the front of the remaining operand.
-            else if (prev_val) {
-                op = op.substr(op.find(sym) + sym.length());
+            else if ((sym == VALUE) || (sym == PC)) {
+                prev_val = true;
             }
-            // If the previous symbol was not a value it must be checked that 
-            // the string SYMBOL is at the start of the line before cutting it
-            else if (op.find(sym) == 0) {
-                op = op.substr(op.find(sym) + sym.length());
-            }
-            // If its not at the start and the symbol before was not a value 
-            // then the operand does not match.
-            else {
-                return false;
-            }
-            prev_val = false;
         }
-        else if (sym == VALUE) {
-            prev_val = true;
+        // Since the op has been cut off of all symbols and values between them, the
+        // remaining operand must either be an empty string, or the last symbol must
+        // be a value for the operand to match the template. If its a value add it,
+        // if its an empty string add it only if theres no arguments.
+        if ((op_temp.back() == VALUE) || ((op == "") && arguments.empty())) {
+            arguments.push_back(op);
         }
+        return arguments;
     }
-    // Since the op has been cut off of all symbols and values between them, the
-    // remaining operand must either be an empty string, or the last symbol must
-    // be a value for the operand to match the template.
-    return (op == "") || (op_temp.back() == VALUE);
+    return std::vector<std::string>();
 }
 
 void isa::element_check(std::string element, std::string ref, std::string& \
@@ -309,7 +324,6 @@ void isa::compile_to_shared_lib(const std::string& source_file) {
     if (system(command.c_str()) != 0) {
         std::cerr << "Error: Can not compile the source file: " << source_file \
                      << std::endl;
-        exit(EXIT_FAILURE);
     } 
     return;
 }
@@ -538,25 +552,24 @@ void isa::parse_isa_code_macro(std::vector<std::string> isa_line_data, \
     return;
 }
 
-void* isa::load_function(const std::string& lib_name, \
-                         const std::string& func_name) {
-    void* handle = dlopen(lib_name.c_str(), RTLD_LAZY);
-    if (!handle) {
-        return NULL;
+code_macro::func_ptr isa::load_function(const std::string& lib_name, \
+                                        const std::string& func_name) {
+        void* handle = dlopen(lib_name.c_str(), RTLD_LAZY);
+        if (!handle) {
+            std::cerr << "Error: Cannot open library: " << dlerror() << std::endl;
+            return nullptr;
+        }
+
+        dlerror(); // reset errors
+        code_macro::func_ptr func = (code_macro::func_ptr)dlsym(handle, func_name.c_str());
+        const char* dlsym_error = dlerror();
+        if (dlsym_error) {
+            std::cerr << "Error: " << dlsym_error << std::endl;
+            dlclose(handle);
+            return nullptr;
+        }
+        return func;
     }
-
-    dlerror(); // reset errors
-    void* func = dlsym(handle, func_name.c_str());
-
-    const char* dlsym_error = dlerror();
-    if (dlsym_error) {
-        dlclose(handle);
-        std::cout << "Compiler error: " << dlsym_error <<std::endl;
-        return NULL;
-    }
-
-    return func;
-}
 
 std::string isa::strip_and_lower(std::string& input) {
     std::string result;

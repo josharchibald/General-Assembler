@@ -1,5 +1,5 @@
 ; Steven Lei Caltech 10 ISA 
-/home/stevens/Documents/General-Assembler/utils/caltech10_isa_functions.cpp
+/home/joshua/General-Assembler/utils/caltech10_isa_functions.cpp
 8
 256
 label: op_name operand;

@@ -8,7 +8,6 @@
 #include <string>
 #include <unordered_map>
 #include "code_macro.hpp"
-#include "asm_line.hpp"
 #include <vector>
 
 #ifndef ISA_HPP
@@ -16,6 +15,10 @@
 
 // Constants.
 const size_t ISA_INVALID = std::string::npos;
+const std::string PC = "$Val";
+
+
+class asm_line;
 
 class isa {
 	// Publicly usable.
@@ -102,7 +105,7 @@ class isa {
         // This function takes in the name of a dynamically linked library and 
         //  function name, both as strings and returns the function pointer to
         // the function.
-        void* load_function(const std::string& lib_name, \
+        code_macro::func_ptr load_function(const std::string& lib_name, \
                             const std::string& func_name);
 
         // This function takes in a style element and a reference element as 
@@ -114,8 +117,13 @@ class isa {
         void element_check(std::string element, std::string ref, \
                            std::string& status, std::string& line, \
                            size_t cutoff);
-        // This function takes an operand template as a vector of strings and an
-        // string operand that gets modified and determines if they match.
-        bool op_match(std::vector<std::string> op_temp, std::string& op);
+        // This function takes an operand template as a vector of strings and a
+        // string operand that gets modified and determines if they match. If 
+        // they do a vector of strings is returned with the string arguments, an
+        // empty string means the instruction has no arguments. If they don't 
+        // then the instructions operand template doesn't match and an empty 
+        // vector is returned.
+        std::vector<std::string> op_match(std::vector<std::string> op_temp, \
+                                          std::string& op);
 };
 #endif // ISA_HPP

@@ -11,7 +11,7 @@ CXXFLAGS+=-DNDEBUG
 endif
 
 # Base directory
-BASEDIR=/home/joshua/General-Assembler/GenA
+BASEDIR=GenA
 
 INCLUDES=-I$(BASEDIR)/include
 

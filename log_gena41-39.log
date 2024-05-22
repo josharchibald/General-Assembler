@@ -1,0 +1,10 @@
+
+ISA file utils/avr_isa.txt parsed.
+
+First pass complete. 
+Symbol table retrievd: 
+
+j                         | 0x48
+more                      | 0x58
+Data_member               | 0x40
+and                       | 0x30

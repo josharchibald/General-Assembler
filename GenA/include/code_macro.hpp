@@ -14,7 +14,7 @@
 class code_macro {
 	// Publicly usable.
 	public:
-		using func_ptr = void (*)();
+        using func_ptr = size_t(*)(size_t, std::vector<std::string>);
 		// Constructor.
 		// Takes in, and updates all data.
 		code_macro(size_t op_code, std::vector<std::string> operand_template, \
@@ -30,7 +30,8 @@ class code_macro {
 		func_ptr func(void);
         size_t num_inst_bits(void);
 
-
+        // Public list of arguments when matched by the isa to an asm line.
+        std::vector<std::string> arguments;
 	// Private usage only.
 	private:
 		// Private data members.
