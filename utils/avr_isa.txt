@@ -1,4 +1,4 @@
-/home/stevens/Documents/General-Assembler/utils/avr_isa_functions.cpp
+utils/avr_isa_functions.cpp
 8
 256
 label: op_name operand;
@@ -67,7 +67,7 @@ ICALL 38281 parse_full_length 16
 IJMP 37905 parse_full_length 16
 IN 22 Val Sym, Val parse_io 16
 INC 1187 Val parse_ld_st_stck_alu 16
-JMP 598 Val $val parse_call_jmp 32
+JMP 598 Val $Val parse_call_jmp 32
 LAC 1174 SymZ, Val parse_ld_st_stck_alu 16
 LAS 1173 SymZ, Val parse_ld_st_stck_alu 16
 LAT 1175 SymZ, Val parse_ld_st_stck_alu 16
