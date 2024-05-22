@@ -73,6 +73,8 @@ class isa {
 		std::vector<std::string> style_;
 		// Maps operation names to code macros.
 		std::unordered_multimap<std::string, code_macro> code_map_;
+        // The file path for the user functions;
+        std::string user_function_path_;
 
 		// Helper functions.
         // This file takes in a path to a file and compiles it to a shared 
