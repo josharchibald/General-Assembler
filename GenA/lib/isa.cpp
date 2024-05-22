@@ -27,7 +27,7 @@ const size_t PRINC_NUM_MEM = 1;
 const size_t HARV_NUM_MEM = 2;
 const size_t NUM_STYLE_EL = 3;
 const std::string USER_LIB_NAME = \
-                  "/home/joshua/General-Assembler/utils/user_lib";
+                  "user_lib";
 const std::vector<std::string> STYLE_ELEMENTS = {"label", "op_name", "operand"};
 const size_t OP_ELEMENT_IDX = 2;
 const size_t OP_NAME_ELEMENT_IDX = 1;
@@ -42,7 +42,7 @@ const size_t NUM_BITS_REV_IDX = 1;
 const std::string COMMENT = ";";
 const std::string SYMBOL = "Sym";
 const std::string VALUE = "Val";
-const std::string PC = "Val$";
+const std::string PC = "$Val";
 
 // Constructor.
 isa::isa(std::string isa_file_path) {
@@ -303,7 +303,7 @@ std::vector<std::string> isa::split_by_spaces(const std::string& str) {
 }
 
 void isa::compile_to_shared_lib(const std::string& source_file) {
-    std::string command = "g++ -shared -o " + USER_LIB_NAME + " -fPIC " + \
+    std::string command = "g++ -shared -o " + source_file.substr(0, source_file.find_last_of('/') + 1) + USER_LIB_NAME + " -fPIC " + \
                           source_file;
     if (system(command.c_str()) != 0) {
         std::cerr << "Error: Can not compile the source file: " << source_file \
