@@ -124,6 +124,6 @@ class isa {
         // then the instructions operand template doesn't match and an empty 
         // vector is returned.
         std::vector<std::string> op_match(std::vector<std::string> op_temp, \
-                                          std::string& op);
+                                          std::string op);
 };
 #endif // ISA_HPP

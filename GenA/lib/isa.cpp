@@ -237,7 +237,7 @@ size_t isa::harv_not_princ(void) {
 
 // Helper functions.
 std::vector<std::string> isa::op_match(std::vector<std::string> op_temp, \
-                                       std::string& op) {
+                                       std::string op) {
     bool prev_val = false;
     std::vector<std::string> arguments;
     // Go through each sting in the template.

@@ -35,8 +35,8 @@ class assembler {
         // Performs the first pass on the assembly files. Returns true if
         // successful.
         bool first_pass(void);
-        // Performs the second pass the assembly files.
-        void second_pass(void);
+        // Performs the second pass the assembly files. Returns true if success.
+        bool second_pass(void);
 
 
 	// Private usage only.
@@ -72,8 +72,8 @@ class assembler {
         // the lines pseudo operation. Returns true if successful, and false if
         // not, an error message is also displayed.
         bool pseudo_op_handler(std::string line, bool& next_file, \
-        std::vector<std::pair<std::string, std::ifstream>>& asm_file_stack, \
-        size_t line_num);
+        std::vector<std::pair<std::pair<std::string, size_t>, std::ifstream>>& \
+        asm_file_stack);
 };
 
 #endif // ASSEMBLER_HPP

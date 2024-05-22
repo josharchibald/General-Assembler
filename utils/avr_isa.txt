@@ -81,8 +81,6 @@ LD 1032 Val Sym,Y parse_ld_st_stck_alu 16
 LD 1161 Val Sym,Y+ parse_ld_st_stck_alu 16
 LD 1162 Val Sym,-Y parse_ld_st_stck_alu 16
 LD 1164 Val Sym,X parse_ld_st_stck_alu 16
-LD 17 Val Sym,-Y+ Val parse_load_store_16 16
-LD 16 Val Sym,-Z+ Val parse_load_store_16 16
 LDI 14 Val Sym, Val parse_alu_imm 16
 LDS 20 Val Sym, Val parse_load_store_16 16
 LDS 1152 Val Sym, Val parse_load_store_32 32

@@ -38,6 +38,7 @@ const std::string INCLUDE = "include";
 const size_t INCLUDE_SIZE = 2;
 const size_t LABEL_DISPLAY_SIZE = 25;
 const std::string LISTING_FILE_NAME = "list_gena.lst";
+const std::string LINE_NUM = " line  number: ";
 
 // Constructor.
 
@@ -56,12 +57,14 @@ assembler::~assembler() {};
 
 // Public functions.
 bool assembler::first_pass(void) {
-    std::vector<std::pair<std::string, std::ifstream>> asm_file_stack;
+    std::vector<std::pair<std::pair<std::string, size_t>, std::ifstream>> \
+    asm_file_stack;
     std::ifstream entry_file;
     std::string line;
-    size_t line_num;
+    size_t line_num = 0;;
     std::string temp_line;
     bool next_file;
+    std::string file_path;
     size_t inst_size;
     bool success = true;
     
@@ -76,20 +79,24 @@ bool assembler::first_pass(void) {
         std::endl;
         exit(EXIT_FAILURE);
     }
-    asm_file_stack.push_back({entry_path_, std::move(entry_file)});
+    asm_file_stack.push_back({{entry_path_, line_num}, std::move(entry_file)});
 
     // While there are still files to assemble, get the file name and file from
     // the top of the stack.
     while (!asm_file_stack.empty()) {
-        std::pair<std::string, std::ifstream>& asm_file_pair = \
-                                               asm_file_stack.back();
+        std::pair<std::pair<std::string, size_t>, std::ifstream>& \
+        asm_file_pair = asm_file_stack.back();
         std::ifstream& asm_file = asm_file_pair.second;
 
         next_file = false;
-        line_num = 0;
+        // This is the line number stored with the file path
+        line_num = asm_file_pair.first.second;
+        file_path = asm_file_pair.first.first;
 
         while (std::getline(asm_file, line) && !next_file) {
+            // Update the line number as it comes in and out of the stack.
             line_num++;
+            asm_file_pair.first.second = line_num;
             // If while parsing, the continue symbol is at the end of the line,
             // save the line in a temp for when the next cycle comes.
             if (line.find(CONTINUE) == (line.size() - 1)) {
@@ -104,13 +111,13 @@ bool assembler::first_pass(void) {
                 // which can modify the file and line search.
                 if ((line.find(PSEUDO_OP) == 0)) {
                     success = pseudo_op_handler(line, next_file, \
-                                                asm_file_stack, line_num);
+                                                asm_file_stack);
                 }
                 else {
                     // Make sure assembly line is valid before adding it to the 
                     // assembly program data member.
                     asm_line assembly_line = cpu_isa_.parse_asm(line, \
-                    asm_file_pair.first);  
+                    file_path);  
                     if (assembly_line.origin_file() != ASM_INVALID) {
                         if (assembly_line.label() != "") {
                             // Update the symbol table if there is a label and
@@ -123,11 +130,13 @@ bool assembler::first_pass(void) {
                             else  {
                                 std::cerr << "Error: Redefinition of " << \
                                 assembly_line.label() << " on line " << \
-                                line_num << " in file " << asm_file_pair.first \
+                                line_num << " in file " << file_path \
                                 << std::endl;
                                 success = false;
                             }
                         }
+                        // If there is an instruction then put it at pc which
+                        // maybe changed by code location.
                         inst_size = assembly_line.size(cpu_isa_);
                         if (inst_size > 0) {
                             auto it = asm_prog_.begin();
@@ -145,13 +154,14 @@ bool assembler::first_pass(void) {
                             pc_ += inst_size;
                         }
                         else {
+                            // Still keep the line;
                             asm_prog_.push_back(assembly_line);
                         }
                     } 
                     else {
                         std::cerr << "Error: Invalid line of assembly on " << \
                         "line " << line_num << " in file " << \
-                        asm_file_pair.first << std::endl;
+                        file_path << std::endl;
                         success = false;
                     }
                 }
@@ -161,7 +171,7 @@ bool assembler::first_pass(void) {
                 std::cerr << "Error: " << \
                 std::to_string(cpu_isa_.mem_sizes().front()) << " words of " \
                 << "the program memory exceeded on line " << line_num \
-                << " in file " << asm_file_pair.first << std::endl;
+                << " in file " << file_path << std::endl;
                 success = false;
             }
             if (cpu_isa_.harv_not_princ()) {
@@ -170,7 +180,7 @@ bool assembler::first_pass(void) {
                     std::cerr << "Error: " << \
                     std::to_string(cpu_isa_.mem_sizes().back()) << " words " \
                     << "of the data memory exceeded on line " << line_num \
-                    << " in file " << asm_file_pair.first << std::endl;
+                    << " in file " << file_path << std::endl;
                     success = false;
                 }
             }
@@ -183,7 +193,7 @@ bool assembler::first_pass(void) {
         }        
         // If next file is set true, the next file on the stack is opened.
     }    
-    std::clog << "\nFirst pass complete. \nSymbol table retrievd: \n" \
+    std::clog << "\nFirst pass complete. \n\nSymbol table:" \
               << std::endl;
     // Iterate through the symbol table and print each key-value pair.
     std::string disp_label;
@@ -197,8 +207,8 @@ bool assembler::first_pass(void) {
     return success;
 }
 
-void assembler::second_pass(void) {
-    std::ofstream output_file(output_file_path_, std::ios::app);
+bool assembler::second_pass(void) {
+    std::ofstream output_file(output_file_path_);
     std::ofstream list_file;
 
     if (!output_file) {
@@ -207,26 +217,37 @@ void assembler::second_pass(void) {
         list_ = true;
     }
     if (list_) {
-        list_file.open(LISTING_FILE_NAME, std::ios::app);
+        list_file.open(LISTING_FILE_NAME);
+        list_file.clear();
     }
 
-    
     size_t addr = 0;
     std::string value;
-    size_t width = std::ceil(std::log2((double)cpu_isa_.word_sizes().front()));
+    size_t width = 5;
+    size_t data;
     for (asm_line line : asm_prog_) {
+        addr++;
         if (line.origin_file() != ASM_INVALID) {
             if (list_file) {
                 if (line.size(cpu_isa_) > 0) {
-                    list_file << std::setw(width) << std::setfill('0') << \
-                    std::hex << addr << std::setw(width) << std::setfill('0') 
-                    << std::hex <<line.assemble(cpu_isa_, symbol_table_, addr) \
-                    << ";" << line.text() << std::endl;
-                    addr += line.size(cpu_isa_);
-                }
+                    data = line.assemble(cpu_isa_, symbol_table_, addr);
+                    if (data != std::string::npos) {
+                        list_file << std::setw(width) << std::setfill('0') \
+                            << std::hex << addr << " " 
+                            << std::setw(width) << std::setfill('0') << std::hex 
+                            << line.assemble(cpu_isa_, symbol_table_, addr) 
+                            << "\t;" 
+                            << line.text() \
+                            << std::endl;
+                        addr += line.size(cpu_isa_);
+                    }
+                    else {
+                        std::cerr << "Error: Function code macro" << std::endl;
+                    }
+                } 
                 else {
-                list_file << std::setw(width * 2) << ";" << line.text() << \
-                std::endl;
+                    list_file << "\t\t\t\t;" << line.text() \
+                    << std::endl;
                 }
             }
         }
@@ -237,14 +258,20 @@ void assembler::second_pass(void) {
     if (list_file) {
         list_file.close();
     }
-    return;
+    return true;
 }
 
+
+
 // Helper functions.
+
+
 bool assembler::pseudo_op_handler(std::string line, bool& next_file, \
-                       std::vector<std::pair<std::string, std::ifstream>>& \
-                       asm_file_stack, size_t line_num) {
+        std::vector<std::pair<std::pair<std::string, size_t>, std::ifstream>>& \
+                       asm_file_stack) {
     std::vector<std::string> line_data;
+    std::string file_path = asm_file_stack.back().first.first;
+    size_t line_num = asm_file_stack.back().first.second;
     line_data = cpu_isa_.split_by_spaces(line.substr(PSEUDO_OP.length()));
     // Conditionals for pseudo operations as they are all very different.
     // The number after the code location pseudo op gets set to the pc. 
@@ -257,7 +284,7 @@ bool assembler::pseudo_op_handler(std::string line, bool& next_file, \
             catch (const std::exception& e) {
                 std::cerr << "Error: Invalid code location entry: " << \
                 line_data.at(CODE_LOC_SIZE) << " on line " << line_num << \
-                " in file: " << asm_file_stack.back().first << std::endl;
+                " in file: " << file_path << std::endl;
                 return false;
             }
             pc_ = std::stoul(line_data.at(CODE_LOC_SIZE - 1)) * \
@@ -281,7 +308,7 @@ bool assembler::pseudo_op_handler(std::string line, bool& next_file, \
             catch (const std::exception& e) {
                 std::cerr << "Error: Invalid variable word count entry " << \
                 line_data.at(VAR_DEC_SIZE) << " on line " << line_num << \
-                " in file: " << asm_file_stack.back().first << std::endl;
+                " in file: " << file_path << std::endl;
                 return false;
             }
             if (cpu_isa_.harv_not_princ()) {
@@ -298,7 +325,7 @@ bool assembler::pseudo_op_handler(std::string line, bool& next_file, \
             else  {
                 std::cerr << "Error: Redefinition of " << var_name << \
                 " on line " << line_num << " in file " << \
-                asm_file_stack.back().first << std::endl;
+                file_path << std::endl;
             }           
             // The updated memory space pointer is updated.
             *memory = *memory + \
@@ -318,7 +345,7 @@ bool assembler::pseudo_op_handler(std::string line, bool& next_file, \
             catch (const std::exception& e) {
                 std::cerr << "Error: Invalid constant definition entry: " << \
                 line_data.at(CONST_SIZE) << " on line " << line_num << \
-                " in file: " << asm_file_stack.back().first << std::endl;
+                " in file: " << file_path << std::endl;
                 return false;
             }
             // If the const name already exists as a variable or label or const
@@ -331,7 +358,7 @@ bool assembler::pseudo_op_handler(std::string line, bool& next_file, \
             else  {
                 std::cerr << "Error: Redefinition of " << const_name << \
                 " on line " << line_num << " in file " << \
-                asm_file_stack.back().first << std::endl;
+                file_path << std::endl;
                 return false;
             }           
         }
@@ -364,7 +391,7 @@ bool assembler::pseudo_op_handler(std::string line, bool& next_file, \
             // Indicate that the next file on the stack should be moved to and 
             // add the included file.
             if (add_file) {
-                asm_file_stack.push_back({new_file_path, std::move(new_file)});
+                asm_file_stack.push_back({{new_file_path, 0}, std::move(new_file)});
                 asm_file_paths_.insert(new_file_path);
                 next_file = true;
             }

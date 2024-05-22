@@ -114,8 +114,8 @@ int main(int argc, char* argv[]) {
     // These variables hold the data parsed from the command line arguments. 
 	std::filesystem::path main_file_path;
 	std::filesystem::path isa_file_path;
-	std::filesystem::path output_file_path = DEFAULT_OUTPUT_PATH;
-	bool list, log, verbose;
+	std::filesystem::path output_file_path;
+	bool list, log, verbose, done;
 
 	// Call the usage error and exit if there are no command line arguments.
 	if (argc == 1) {
@@ -188,7 +188,7 @@ int main(int argc, char* argv[]) {
         auto tm = *std::localtime(&t);
 
         log_name << LOG_FILE_NAME << std::put_time(&tm, "%M-%S") << ".log";
-        log_file.open(log_name.str(), std::ios::app);
+        log_file.open(log_name.str());
         // Redirect std::cerr and std::clog to the error file.
         if (!log_file.is_open()) {
             std::cerr << "Failed to open or create the log file: " \
@@ -205,7 +205,8 @@ int main(int argc, char* argv[]) {
         std::clog << "Warning: Cannot use both log and verbose flags at the " \
         << "same time. Outputting to log file " << log_name.str() << " only." \
         << std::endl;
-    } else if (log) {
+    }
+    if (log) {
         // Redirect std::cerr and std::clog to the file.
         std::cerr.rdbuf(log_file.rdbuf());
         std::clog.rdbuf(log_file.rdbuf());
@@ -221,11 +222,15 @@ int main(int argc, char* argv[]) {
         std::clog.rdbuf(&null_buf);
     }
 
+    if (output_file_path.empty()) {
+        output_file_path = DEFAULT_OUTPUT_PATH;
+    }
+
     // Create and use the assembler object.
     assembler gena(main_file_path, isa_file_path, output_file_path, verbose, \
     list);
     if (gena.first_pass()) {
-        gena.second_pass();
+        done = gena.second_pass();
     }
     else {
         std::cout << "Failed. See log file using -l flag." << std::endl;
@@ -236,6 +241,13 @@ int main(int argc, char* argv[]) {
 
     if (log_file.is_open()) {
         log_file.close();
+    }
+
+    if (done) {
+        std::cout << main_file_path << " assembled." << std::endl;
+    }
+    else {
+        std::cout << "Failed." << std::endl;
     }
 	return 0;
 }
