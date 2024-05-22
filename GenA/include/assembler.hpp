@@ -76,18 +76,9 @@ class assembler {
              std::list<std::pair<std::string, std::ifstream>>& asm_file_stack, \
              size_t line_num);
         // Function to get terminal height.
-        int getTerminalHeight() {
-            struct winsize w;
-            ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-            return w.ws_row;
-        }
-
+        size_t get_terminal_height();
         // Function to print status at the bottom of the terminal.
-        void printStatus(const std::string& message) {
-            int terminalHeight = getTerminalHeight();
-            std::cout << "\033[" << terminalHeight << ";1H" << "\033[K" << \
-            message << "\r" << std::flush;
-        }
+        void print_to_user(const std::string& message);
 };
 
 #endif // ASSEMBLER_HPP

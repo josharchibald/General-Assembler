@@ -285,3 +285,17 @@ void assembler::pseudo_op_handler(std::string line, bool& next_file, \
         }
     }
 }
+
+size_t assembler::get_terminal_height() {
+    struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    return w.ws_row;
+}
+
+void assembler::print_to_user(const std::string& message) {
+    if (verbose_) {
+        size_t terminal_height = get_terminal_height();
+        std::cout << "\033[" << terminal_height << ";1H" << "\033[K" << \
+        message << "\r" << std::flush;
+    }
+}
