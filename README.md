@@ -1,5 +1,3 @@
-Sure! Here is the command-line based general assembler usage information formatted in Markdown:
-
 # General-Assembler
 
 Two-pass command line based general assembler. Clone the repo and run `make` on the command line to compile and add `GenA` to your bin.
