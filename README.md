@@ -4,9 +4,7 @@ Two-pass command line based general assembler. Clone the repo and run `make` on 
 
 ## Usage
 
-```sh
-gena [options]
-```
+First build gena using `make` (you will need to have make installed) in the `GenA` directory. You can then run gena with the command `gena` for further instructions.
 
 ## Options
 
