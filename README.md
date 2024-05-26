@@ -1,10 +1,10 @@
 # General-Assembler
 
-Two-pass command line based general assembler. Clone the repo and run `make` on the command line to compile and add `GenA` to your bin.
+Two-pass command line based general assembler. Please read all of the below notes.
 
 ## Usage
 
-First build gena using `make` (you will need to have make installed) in the `GenA` directory. You can then run gena with the command `gena` for further instructions.
+Run `make` (you will need to have it installed) in the General-Assembler directory. Then build using `make`. `cd` into the GenA directory and you can then run gena with the command `./gena` for further instructions.
 
 ## Options
 
@@ -41,7 +41,7 @@ First build gena using `make` (you will need to have make installed) in the `Gen
 ---
 
 Currently the listing file output format is only supported. What makes this 
-assembler general is the ISA file. This can describe, any harvard or 
+assembler general is the ISA file. This can describe any harvard or 
 princeton architecture even with variable sized instruction sets. A user library
 and a processors properties must be defined at the top. The bulk of the file
 are code macros.
@@ -63,6 +63,7 @@ documentation improves.
 Supported pseudo operations are code location, file inclusion, and variable 
 declarations. GenA also supports forward referencing.
 
-
+## Update as of May 25 2024:
+The listing file output is not necessarily correct, but should assemble someoutput using the the `isa.txt`. The outputs have not been rigorously tested due to time constraints.
 
 
