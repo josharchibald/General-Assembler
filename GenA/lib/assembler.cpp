@@ -7,7 +7,7 @@
 // 05/20/24 Joshua Archibald Pseudo operations implemented.
 // 05/21/24 Joshua Archibald Pseudo operations debugged.
 // 05/21/24 Joshua Archibald Implemented second_pass.
-
+// 05/22/24 Joshua Archibald Debugged second pass.
 
 // Included libraries.
 #include "assembler.hpp"
@@ -23,7 +23,6 @@
 #include <iomanip>
 #include <unordered_set>
 #include <cmath>
-
 
 // Constants.
 const std::string PSEUDO_OP = ".";
@@ -41,16 +40,12 @@ const std::string LISTING_FILE_NAME = "list_gena.lst";
 const std::string LINE_NUM = " line  number: ";
 
 // Constructor.
-
-// Constructor.
-
 assembler::assembler(std::string entry_path, std::string isa_file_path, \
                      std::string output_file_path, bool verbose, \
                      bool list) : entry_path_(entry_path), \
                      cpu_isa_(isa_file_path), \
                      output_file_path_(output_file_path), \
                      verbose_(verbose), list_(list), pc_(0), data_used_(0) {}
-
 
 // Destructor
 assembler::~assembler() {};
@@ -157,7 +152,9 @@ bool assembler::first_pass(void) {
                             // Still keep the line;
                             asm_prog_.push_back(assembly_line);
                         }
-                    } 
+                    }
+                    // The line of assembly itself is invalid and thus the
+                    // process is unsuccessful.
                     else {
                         std::cerr << "Error: Invalid line of assembly on " << \
                         "line " << line_num << " in file " << \
@@ -166,9 +163,11 @@ bool assembler::first_pass(void) {
                     }
                 }
             }
+            // If the program exceeds the memory a warning is reported but the 
+            // process first pass remains successful for assembly.
             if (pc_ > cpu_isa_.word_sizes().front() * \
                       cpu_isa_.mem_sizes().front()) {
-                std::cerr << "Error: " << \
+                std::clog << "Warning: " << \
                 std::to_string(cpu_isa_.mem_sizes().front()) << " words of " \
                 << "the program memory exceeded on line " << line_num \
                 << " in file " << file_path << std::endl;
@@ -177,7 +176,7 @@ bool assembler::first_pass(void) {
             if (cpu_isa_.harv_not_princ()) {
                 if (data_used_ > cpu_isa_.word_sizes().back() * \
                         cpu_isa_.mem_sizes().back()) {
-                    std::cerr << "Error: " << \
+                    std::clog << "Warning: " << \
                     std::to_string(cpu_isa_.mem_sizes().back()) << " words " \
                     << "of the data memory exceeded on line " << line_num \
                     << " in file " << file_path << std::endl;
@@ -211,6 +210,9 @@ bool assembler::second_pass(void) {
     std::ofstream output_file(output_file_path_);
     std::ofstream list_file;
 
+    // Open the output file. If it can not be opened display to the user that
+    // a listing file will be used instead even if they do not have the verbose 
+    // flag.
     if (!output_file) {
         std::cout << "Error: Cannot open output file " << output_file_path_ \
         << ". Will produce listing file " << LISTING_FILE_NAME << std::endl;
@@ -219,35 +221,39 @@ bool assembler::second_pass(void) {
     if (list_) {
         list_file.open(LISTING_FILE_NAME);
         list_file.clear();
-    }
 
-    size_t addr = 0;
-    std::string value;
-    size_t width = 5;
-    size_t data;
-    for (asm_line line : asm_prog_) {
-        addr++;
-        if (line.origin_file() != ASM_INVALID) {
-            if (list_file) {
-                if (line.size(cpu_isa_) > 0) {
-                    data = line.assemble(cpu_isa_, symbol_table_, addr);
-                    if (data != std::string::npos) {
-                        list_file << std::setw(width) << std::setfill('0') \
-                            << std::hex << addr << " " 
-                            << std::setw(width) << std::setfill('0') << std::hex 
-                            << line.assemble(cpu_isa_, symbol_table_, addr) 
-                            << "\t;" 
-                            << line.text() \
+        size_t addr = 0;
+        std::string value;
+        size_t width = 5;
+        size_t data;
+        for (asm_line line : asm_prog_) {
+            addr++;
+            if (line.origin_file() != ASM_INVALID) {
+                if (list_file) {
+                    if (line.size(cpu_isa_) > 0) {
+                        data = line.assemble(cpu_isa_, symbol_table_, addr);
+                        if (data != std::string::npos) {
+                            list_file << std::setw(width) << std::setfill('0') \
+                                << std::hex << addr << " " 
+                                << std::setw(width) << std::setfill('0')
+                                << std::hex 
+                                << line.assemble(cpu_isa_, symbol_table_, addr) 
+                                << "\t;" 
+                                << line.text() \
+                                << std::endl;
+                            addr += line.size(cpu_isa_);
+                        }
+                        // Error if the assembly was unsuccessful.
+                        else {
+                            std::cerr << "Error: ISA User library function " << 
+                            "failed for assembly line: " << line.text() 
                             << std::endl;
-                        addr += line.size(cpu_isa_);
-                    }
+                        }
+                    } 
                     else {
-                        std::cerr << "Error: Function code macro" << std::endl;
+                        list_file << "\t\t\t\t;" << line.text() \
+                        << std::endl;
                     }
-                } 
-                else {
-                    list_file << "\t\t\t\t;" << line.text() \
-                    << std::endl;
                 }
             }
         }
@@ -261,10 +267,7 @@ bool assembler::second_pass(void) {
     return true;
 }
 
-
-
 // Helper functions.
-
 
 bool assembler::pseudo_op_handler(std::string line, bool& next_file, \
         std::vector<std::pair<std::pair<std::string, size_t>, std::ifstream>>& \
@@ -391,7 +394,7 @@ bool assembler::pseudo_op_handler(std::string line, bool& next_file, \
             // Indicate that the next file on the stack should be moved to and 
             // add the included file.
             if (add_file) {
-                asm_file_stack.push_back({{new_file_path, 0}, std::move(new_file)});
+                asm_file_stack.push_back(std::make_pair(std::make_pair(new_file_path, 0), std::move(new_file)));
                 asm_file_paths_.insert(new_file_path);
                 next_file = true;
             }
