@@ -103,7 +103,7 @@ void path_flag_handler(std::filesystem::path& path, char *arg, char* prog) {
 // with a zero exit code.
 void version_flag_handler(void) {
 	std::cout << "Version: V.1" << std::endl;
-	std::cout << "Last updated March: 2024" << std::endl;
+	std::cout << "Last updated May: 2024" << std::endl;
 	std::cout << "GitHub: https://github.com/josharchibald/General-Assembler" \
 			  << std::endl;
 	exit(EXIT_SUCCESS);
